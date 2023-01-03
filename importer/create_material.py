@@ -5,11 +5,11 @@ from typing import List
 import bpy
 from bpy.types import Material, Image
 
-from io_scene_warcraft_3 import constants
-from io_scene_warcraft_3.classes.WarCraft3Material import WarCraft3Material
-from io_scene_warcraft_3.classes.WarCraft3Model import WarCraft3Model
-from io_scene_warcraft_3.classes.WarCraft3Texture import WarCraft3Texture
-from io_scene_warcraft_3.preferences import WarCraft3Preferences
+from .. import constants
+from ..classes.WarCraft3Material import WarCraft3Material
+from ..classes.WarCraft3Model import WarCraft3Model
+from ..classes.WarCraft3Texture import WarCraft3Texture
+from ..preferences import WarCraft3Preferences
 
 
 def create_material(model: WarCraft3Model, team_color: str) -> List[Material]:

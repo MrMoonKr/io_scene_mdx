@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from io_scene_warcraft_3.classes.WarCraft3Vertex import WarCraft3Vertex
+from .WarCraft3Vertex import WarCraft3Vertex
 
 
 class WarCraft3Geoset:
@@ -8,8 +8,8 @@ class WarCraft3Geoset:
         self.name = None
         self.wc3_vertices: List[WarCraft3Vertex] = []
         self.vertices: List[List[float]] = []
-        self.normals: [float] = []
-        self.triangles: [float] = []
+        self.normals: List[float] = []
+        self.triangles: List[float] = []
         self.uvs = []
         self.material_id = 0
         self.vertex_groups: List[List[int]] = []

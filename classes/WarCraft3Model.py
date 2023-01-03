@@ -1,11 +1,11 @@
 from typing import List
 
-from io_scene_warcraft_3.classes.WarCraft3GeosetAnimation import WarCraft3GeosetAnimation
-from io_scene_warcraft_3.classes.WarCraft3Material import WarCraft3Material
-from io_scene_warcraft_3.classes.WarCraft3Geoset import WarCraft3Geoset
-from io_scene_warcraft_3.classes.WarCraft3Node import WarCraft3Node
-from io_scene_warcraft_3.classes.WarCraft3Sequence import WarCraft3Sequence
-from io_scene_warcraft_3.classes.WarCraft3Texture import WarCraft3Texture
+from .WarCraft3GeosetAnimation import WarCraft3GeosetAnimation
+from .WarCraft3Material import WarCraft3Material
+from .WarCraft3Geoset import WarCraft3Geoset
+from .WarCraft3Node import WarCraft3Node
+from .WarCraft3Sequence import WarCraft3Sequence
+from .WarCraft3Texture import WarCraft3Texture
 
 
 class WarCraft3Model:

@@ -4,10 +4,10 @@ import bpy
 import mathutils
 from bpy.types import Object, Action, FCurve, PoseBone
 
-from io_scene_warcraft_3 import constants
-from io_scene_warcraft_3.classes.WarCraft3Model import WarCraft3Model
-from io_scene_warcraft_3.classes.WarCraft3Node import WarCraft3Node
-from io_scene_warcraft_3.classes.WarCraft3Transformation import WarCraft3Transformation
+from .. import constants
+from ..classes.WarCraft3Model import WarCraft3Model
+from ..classes.WarCraft3Node import WarCraft3Node
+from ..classes.WarCraft3Transformation import WarCraft3Transformation
 
 
 def create_armature_actions(armature_object: Object, model: WarCraft3Model, frame_time: float):

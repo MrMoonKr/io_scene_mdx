@@ -3,8 +3,8 @@ from typing import List
 import bpy
 from bpy.types import Object
 
-from io_scene_warcraft_3 import constants
-from io_scene_warcraft_3.classes.WarCraft3Model import WarCraft3Model
+from .. import constants
+from ..classes.WarCraft3Model import WarCraft3Model
 
 
 def create_object_actions(model: WarCraft3Model, bpy_objects: List[Object], frame_time: float):

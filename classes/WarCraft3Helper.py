@@ -1,4 +1,4 @@
-from io_scene_warcraft_3.classes.WarCraft3Node import WarCraft3Node
+from .WarCraft3Node import WarCraft3Node
 
 
 class WarCraft3Helper(WarCraft3Node):

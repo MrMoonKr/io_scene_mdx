@@ -3,8 +3,8 @@ from typing import List, Dict, Set
 import bpy
 from bpy.types import Object, BoneGroup
 
-from io_scene_warcraft_3.classes.WarCraft3Model import WarCraft3Model
-from io_scene_warcraft_3.classes.WarCraft3Node import WarCraft3Node
+from ..classes.WarCraft3Model import WarCraft3Model
+from ..classes.WarCraft3Node import WarCraft3Node
 
 
 def create_armature_object(model: WarCraft3Model, bpy_mesh_objects: List[Object], bone_size: float) -> Object:

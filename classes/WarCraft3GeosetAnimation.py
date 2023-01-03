@@ -1,6 +1,6 @@
 from typing import Optional
 
-from io_scene_warcraft_3.classes.WarCraft3Transformation import WarCraft3Transformation
+from .WarCraft3Transformation import WarCraft3Transformation
 
 
 class WarCraft3GeosetAnimation:
