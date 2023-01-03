@@ -1,3 +1,14 @@
+# io_scene_mdx
+( In Development )  
+( Not Working )  
+( Don't Use )
+
+## DevOps
+
+- Blender v3.4.1
+- Python v3.10
+- VS Code + Python Extension
+
 # Blender_WarCraft-3
 2.9x* port of PavelBlend's mdx-importer<br>
 <b>Now for both .mdl and mdx</b><br>
