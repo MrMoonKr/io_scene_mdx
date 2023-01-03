@@ -61,6 +61,7 @@ def create_mesh_objects(model: WarCraft3Model, bpy_materials: List[Material]):
                 bpy_object.vertex_groups.get(str(vertexGroupId)).add([vertex_index, ], 1.0, 'REPLACE')
 
         bpy_mesh_objects.append(bpy_object)
+        
     return bpy_mesh_objects
 
 

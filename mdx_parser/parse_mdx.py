@@ -19,17 +19,22 @@ from .parse_version import parse_version
 
 
 def parse_mdx( data: bytes, import_properties: MDXImportProperties ):
+    """
+        바이트버퍼 형태의 mdx 파일데이터 파싱
+    """
     data_size = len(data)
-    r = binary_reader.Reader(data)
-    r.getid(constants.CHUNK_MDX_MODEL)
+    br = binary_reader.Reader(data)
+    data_id = br.getid( constants.CHUNK_MDX_MODEL ) # 파일헤더ID 'MDLX'
+    print( 'File Header ID : ' + data_id )
+    
     model = WarCraft3Model()
     model.file = import_properties.mdx_file_path
 
-    while r.offset < data_size:
-        chunk_id = r.getid(constants.SUB_CHUNKS_MDX_MODEL, debug=True)
-        chunk_size = r.getf('<I')[0]
-        chunk_data: bytes = data[r.offset: r.offset + chunk_size]
-        r.skip(chunk_size)
+    while br.offset < data_size:
+        chunk_id = br.getid(constants.SUB_CHUNKS_MDX_MODEL, debug=True)
+        chunk_size = br.getf('<I')[0]
+        chunk_data: bytes = data[ br.offset : br.offset + chunk_size ]
+        br.skip( chunk_size )
 
         if chunk_id == constants.CHUNK_VERSION:
             model.version = parse_version(chunk_data)
@@ -37,8 +42,8 @@ def parse_mdx( data: bytes, import_properties: MDXImportProperties ):
         elif chunk_id == constants.CHUNK_MODEL:
             model.name = parse_model(chunk_data)
         
-        elif chunk_id == constants.CHUNK_SEQUENCE:
-            model.sequences.extend(parse_sequences(chunk_data))
+        # elif chunk_id == constants.CHUNK_SEQUENCE:
+        #     model.sequences.extend(parse_sequences(chunk_data))
         
         # elif chunk_id == constants.CHUNK_MATERIAL:
         #     model.materials.extend(parse_materials(chunk_data, model.version))
@@ -77,4 +82,4 @@ def parse_mdx( data: bytes, import_properties: MDXImportProperties ):
             
             
 
-    importer.load_warcraft_3_model(model, import_properties)
+    importer.load_warcraft_3_model( model, import_properties )

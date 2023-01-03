@@ -32,7 +32,7 @@ class WarCraft3OperatorImportMDX( bpy.types.Operator, bpy_extras.io_utils.Import
         size=3,
         subtype='COLOR',
         precision=3
-        )
+    )
     setTeamColor: bpy.props.EnumProperty(
         items=[
             ('RED', 'Red', ''),
@@ -52,7 +52,7 @@ class WarCraft3OperatorImportMDX( bpy.types.Operator, bpy_extras.io_utils.Import
         name='Set Team Color',
         update=utils.set_team_color_property,
         default='RED'
-        )
+    )
 
     def draw(self, context):
         layout = self.layout
