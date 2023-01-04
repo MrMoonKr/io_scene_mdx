@@ -6,15 +6,22 @@ from .parse_node import parse_node
 from ..classes.WarCraft3Node import WarCraft3Node
 
 
-def parse_bones(data: bytes) -> List[WarCraft3Node]:
-    r = binary_reader.Reader(data)
-    data_size = len(data)
+def parse_bones( data: bytes ) -> list[WarCraft3Node]:
+    """
+        'BONE' chunk data
+    """
+    br = binary_reader.Reader( data )
+    data_size = len( data )
 
-    nodes: List[WarCraft3Node] = []
-    while r.offset < data_size:
+    nodes: list[WarCraft3Node] = []
+    
+    while br.offset < data_size:
         bone = WarCraft3Bone()
-        parse_node(r, bone)
-        bone.geoset_id = r.getf('<I')[0]
-        geoset_animation_id = r.getf('<I')[0]
-        nodes.append(bone)
+        
+        parse_node( br, bone )
+        bone.geoset_id = br.getf('<I')[0]
+        geoset_animation_id = br.getf('<I')[0]
+        
+        nodes.append( bone )
+        
     return nodes

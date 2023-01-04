@@ -37,37 +37,37 @@ def parse_mdx( data: bytes, import_properties: MDXImportProperties ):
         br.skip( chunk_size )
 
         if chunk_id == constants.CHUNK_VERSION:
-            model.version = parse_version(chunk_data)
+            model.version = parse_version( chunk_data )
         
         elif chunk_id == constants.CHUNK_MODEL:
-            model.name = parse_model(chunk_data)
+            model.name = parse_model( chunk_data )
         
-        # elif chunk_id == constants.CHUNK_SEQUENCE:
-        #     model.sequences.extend(parse_sequences(chunk_data))
+        elif chunk_id == constants.CHUNK_SEQUENCE:
+            model.sequences.extend( parse_sequences( chunk_data ) )
         
-        # elif chunk_id == constants.CHUNK_MATERIAL:
-        #     model.materials.extend(parse_materials(chunk_data, model.version))
+        elif chunk_id == constants.CHUNK_MATERIAL:
+            model.materials.extend( parse_materials( chunk_data, model.version ) )
         
-        # elif chunk_id == constants.CHUNK_TEXTURE:
-        #     model.textures.extend(parse_textures(chunk_data))
+        elif chunk_id == constants.CHUNK_TEXTURE:
+            model.textures.extend( parse_textures( chunk_data ) )
         
         elif chunk_id == constants.CHUNK_GEOSET:
-            model.geosets.extend(parse_geosets(chunk_data, model.version))
+            model.geosets.extend( parse_geosets( chunk_data, model.version ) )
         
         # elif chunk_id == constants.CHUNK_GEOSET_ANIMATION:
         #     model.geoset_animations.extend(parse_geoset_animations(chunk_data))
             
-        # elif chunk_id == constants.CHUNK_BONE:
-        #     model.nodes.extend(parse_bones(chunk_data))
+        elif chunk_id == constants.CHUNK_BONE:
+            model.nodes.extend( parse_bones( chunk_data ) )
             
-        # elif chunk_id == constants.CHUNK_HELPER:
-        #     model.nodes.extend(parse_helpers(chunk_data))
+        elif chunk_id == constants.CHUNK_HELPER:
+            model.nodes.extend( parse_helpers( chunk_data ) )
             
         # elif chunk_id == constants.CHUNK_ATTACHMENT:
         #     model.nodes.extend(parse_attachments(chunk_data))
         
-        # elif chunk_id == constants.CHUNK_PIVOT_POINT:
-        #     model.pivot_points.extend(parse_pivot_points(chunk_data))
+        elif chunk_id == constants.CHUNK_PIVOT_POINT:
+            model.pivot_points.extend( parse_pivot_points( chunk_data ) )
         
             
             

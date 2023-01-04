@@ -4,34 +4,30 @@ from .. import constants
 from .parse_geoset_transformation import parse_geoset_transformation
 
 
-def parse_node(r: Reader, node: WarCraft3Node):
-    inclusive_size = r.offset + r.getf('<I')[0]
-    node.name = r.gets(80)
-    node.id = r.getf('<I')[0]
-    node.parent = r.getf('<I')[0]
+def parse_node( br: Reader, node: WarCraft3Node ):
+    """
+        node data
+    """
+    inclusive_size = br.offset + br.getf('<I')[0]
+    node.name = br.gets(80)
+    node.id = br.getf('<I')[0]
+    node.parent = br.getf('<I')[0]
 
     if node.parent == 0xffffffff:
         node.parent = None
 
-    flags = r.getf('<I')[0]
+    flags = br.getf('<I')[0]
 
-    # while r.offset < inclusive_size:
-    #     chunk_id = r.getid(constants.SUB_CHUNKS_NODE)
-    #     if chunk_id == constants.CHUNK_GEOSET_TRANSLATION:
-    #         node.translations = parse_geoset_translation(r)
-    #     elif chunk_id == constants.CHUNK_GEOSET_ROTATION:
-    #         node.rotations = parse_geoset_rotation(r)
-    #     elif chunk_id == constants.CHUNK_GEOSET_SCALING:
-    #         node.scalings = parse_geoset_scaling(r)
-
-    while r.offset < inclusive_size:
-        chunk_id = r.getid(constants.SUB_CHUNKS_NODE)
+    while br.offset < inclusive_size:
+        chunk_id = br.getid( constants.SUB_CHUNKS_NODE ) # node animation
 
         if chunk_id == constants.CHUNK_GEOSET_TRANSLATION:
-            node.translations = parse_geoset_transformation(r, '<3f')
+            node.translations = parse_geoset_transformation( br, '<3f' )
+            
         elif chunk_id == constants.CHUNK_GEOSET_ROTATION:
-            node.rotations = parse_geoset_transformation(r, '<4f')
+            node.rotations = parse_geoset_transformation( br, '<4f' )
+            
         elif chunk_id == constants.CHUNK_GEOSET_SCALING:
-            node.scalings = parse_geoset_transformation(r, '<3f')
+            node.scalings = parse_geoset_transformation( br, '<3f' )
 
     return node

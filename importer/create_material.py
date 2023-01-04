@@ -12,15 +12,22 @@ from ..classes.WarCraft3Texture import WarCraft3Texture
 from ..preferences import WarCraft3Preferences
 
 
-def create_material(model: WarCraft3Model, team_color: str) -> List[Material]:
-    print("creating materials")
+def create_material( model: WarCraft3Model, team_color: str ) -> List[Material]:
+    """
+        create blender material 
+    """
+    print( "creating materials" )
     # preferences = bpy.context.preferences.addons.get('io_scene_warcraft_3') #['io_scene_warcraft_3'].preferences
-    preferences: WarCraft3Preferences = bpy.context.preferences.addons.get('io_scene_warcraft_3').preferences
+    addon: bpy.types.Addon = bpy.context.preferences.addons.get('io_scene_mdx')
+    if addon:
+        preferences: WarCraft3Preferences = addon.preferences
+        
+    preferences: WarCraft3Preferences = bpy.context.preferences.addons.get('io_scene_mdx').preferences
 
-    folders = get_folders(preferences.alternativeResourceFolder, preferences.resourceFolder, model.file)
+    folders = get_folders( preferences.alternativeResourceFolder, preferences.resourceFolder, model.file )
 
-    print("folders size: ", len(folders))
-    texture_ext = get_texture_ext(preferences.textureExtension)
+    print( "folders size: ", len( folders ) )
+    texture_ext = get_texture_ext( preferences.textureExtension )
     model.normalize_meshes_names()
 
     bpy_images: List[Image] = []

@@ -7,57 +7,66 @@ from ..classes.WarCraft3Model import WarCraft3Model
 from ..classes.WarCraft3Node import WarCraft3Node
 
 
-def create_armature_object(model: WarCraft3Model, bpy_mesh_objects: List[Object], bone_size: float) -> Object:
+def create_armature_object( model: WarCraft3Model, bpy_mesh_objects: List[Object], bone_size: float ) -> Object:
+    """
+        blender armature 생성
+    """
     print("creating armature")
+    
     nodes = model.nodes
     pivot_points = model.pivot_points
+    
     # bpy_armature: bpy.types.Armature = bpy.data.armatures.new(model.name + ' Nodes')
-    bpy_armature_object = get_bpy_armature_object(model.name + ' Nodes')
+    bpy_armature_object = get_bpy_armature_object( model.name + ' Nodes' )
     bpy_armature: bpy.types.Armature = bpy_armature_object.data
-    add_mesh_modifier(bpy_armature_object, bpy_mesh_objects)
+    add_mesh_modifier( bpy_armature_object, bpy_mesh_objects )
     # bpy_armature.display_type = 'STICK'
 
-    bone_types = get_bone_type_dict(bone_size, bpy_armature.edit_bones, nodes, pivot_points)
+    bone_types = get_bone_type_dict( bone_size, bpy_armature.edit_bones, nodes, pivot_points )
     # bone_types = add_and_get_node_bone_dict(bone_size, bpy_armature.edit_bones, nodes, pivot_points)
 
-    print(bpy_armature_object.data.edit_bones[0])
+    print( bpy_armature_object.data.edit_bones[0] )
 
-    for indexNode, node in enumerate(nodes):
-        e_bone = bpy_armature.edit_bones[indexNode]
+    for indexNode, node in enumerate( nodes ):
+        e_bone = bpy_armature.edit_bones[ indexNode ]
         if node.parent is not None:
-            parent = bpy_armature.edit_bones[node.parent]
+            parent = bpy_armature.edit_bones[ node.parent ]
             e_bone.parent = parent
             # bone.use_connect = True
 
     for a_bone in bpy_armature.bones:
         a_bone.warcraft_3.nodeType = bone_types[a_bone.name].upper()
 
-    set_vertex_group_names(bpy_armature, bpy_mesh_objects)
+    set_vertex_group_names( bpy_armature, bpy_mesh_objects )
 
-    bpy.ops.object.mode_set(mode='POSE')
-    bone_groups = get_bone_group_dict(bone_types, bpy_armature_object)
+    bpy.ops.object.mode_set( mode='POSE' )
+    bone_groups = get_bone_group_dict( bone_types, bpy_armature_object )
 
     for p_bone in bpy_armature_object.pose.bones:
         p_bone.rotation_mode = 'XYZ'
-        p_bone.bone_group = bone_groups[bone_types[p_bone.name]]
+        p_bone.bone_group = bone_groups[ bone_types[ p_bone.name ] ]
 
-    bpy.ops.object.mode_set(mode='OBJECT')
-    bpy.context.active_object.select_set(False)
+    bpy.ops.object.mode_set( mode='OBJECT' )
+    bpy.context.active_object.select_set( False )
 
     return bpy_armature_object
 
 
 # def get_bpy_armature_object(bpy_armature1: bpy.types.Armature, name: str) -> Object:
-def get_bpy_armature_object(name: str) -> Object:
-    bpy_armature: bpy.types.Armature = bpy.data.armatures.new(name)
-    bpy_armature_object = bpy.data.objects.new(name, bpy_armature)
-    bpy.context.scene.collection.objects.link(bpy_armature_object)
-    bpy_armature_object.select_set(True)
+def get_bpy_armature_object( name: str ) -> Object:
+    """
+        blender armature 생성
+    """
+    bpy_armature: bpy.types.Armature = bpy.data.armatures.new( name )
+    bpy_armature_object: bpy.types.Object = bpy.data.objects.new( name, bpy_armature )
+    bpy.context.scene.collection.objects.link( bpy_armature_object )
+    bpy_armature_object.select_set( True )
     # bpy_armature_object.show_in_front = True
     # bpy_armature_object.mode = 'EDIT'
     bpy.context.view_layer.objects.active = bpy_armature_object
     # bpy.context.scene.objects.active = bpy_armature_object
-    bpy.ops.object.mode_set(mode='EDIT')
+    bpy.ops.object.mode_set( mode='EDIT' )
+    
     return bpy_armature_object
 
 
@@ -150,25 +159,31 @@ def add_and_get_node_bone_dict(bone_size: float, edit_bones: bpy.types.ArmatureE
     return node_to_bone
 
 
-def collect_node_types(node_to_bone: Dict[WarCraft3Node, bpy.types.EditBone]) -> List[str]:
+def collect_node_types( node_to_bone: Dict[WarCraft3Node, bpy.types.EditBone] ) -> List[str]:
+    """
+        노드타입들 모은다
+    """
     node_types: List[str] = []
-    for index, bone in enumerate(node_to_bone):
+    for index, bone in enumerate( node_to_bone ):
         if bone.node_type not in node_types:
-            node_types.append(bone.node_type)
+            node_types.append( bone.node_type )
     node_types.sort()
     return node_types
 
 
-def collect_node_types(bone_types: Dict[str, str]) -> List[str]:
+def collect_node_types( bone_types: Dict[str, str] ) -> List[str]:
+    """
+        노드의 타입 문자열을 모은다 dict( 노드이름, 노드타입 ) -> list( 노드타입 )
+    """
     node_types: List[str] = []
     for index, b_name in enumerate(bone_types):
-        if bone_types[b_name] not in node_types:
-            node_types.append(bone_types[b_name])
+        if bone_types[ b_name ] not in node_types:
+            node_types.append( bone_types[ b_name ] )
     node_types.sort()
     return node_types
 
 
-def get_new_bone_group(nodeType: str, bone_groups: bpy.types. BoneGroups) -> BoneGroup:
+def get_new_bone_group(nodeType: str, bone_groups: bpy.types.BoneGroups) -> BoneGroup:
     bone_group: bpy.types.BoneGroup = bone_groups.get(nodeType + 's')
     if bone_group is None:
         bone_group = bone_groups.new(name=nodeType + 's')
@@ -179,7 +194,7 @@ def get_new_bone_group(nodeType: str, bone_groups: bpy.types. BoneGroups) -> Bon
     return bone_group
 
 
-def get_new_bone_group11(nodeType: str, bone_groups: bpy.types. BoneGroups) -> BoneGroup:
+def get_new_bone_group11(nodeType: str, bone_groups: bpy.types.BoneGroups) -> BoneGroup:
     bone_groups.get(nodeType + 's')
     bone_group: bpy.types.BoneGroup = bone_groups.new(nodeType + 's')
     # bone_group: bpy.types.BoneGroup = bpy.types.BoneGroups.new(nodeType + 's')
