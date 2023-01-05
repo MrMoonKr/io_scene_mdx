@@ -2,7 +2,7 @@ from typing import Optional, List
 
 import bpy
 import mathutils
-from bpy.types import Object, Action, FCurve, PoseBone
+from bpy.types import Object, Action, FCurve, Keyframe, PoseBone
 
 from .. import constants
 from ..classes.WarCraft3Model import WarCraft3Model
@@ -10,30 +10,39 @@ from ..classes.WarCraft3Node import WarCraft3Node
 from ..classes.WarCraft3Transformation import WarCraft3Transformation
 
 
-def create_armature_actions(armature_object: Object, model: WarCraft3Model, frame_time: float):
+def create_armature_actions( armature_object: Object, model: WarCraft3Model, frame_time: float ):
+    """
+        blender armature에 애니메이션 데이터 등록
+    """
     print("adding animations")
+    
     nodes = model.nodes
     sequences = model.sequences
-    action = bpy.data.actions.new(name='#UNANIMATED')
-    add_sequence_to_armature('#UNANIMATED', armature_object)
+    
+    action = bpy.data.actions.new( name='#UNANIMATED' )
+    add_sequence_to_armature( '#UNANIMATED', armature_object )
 
-    action_all = bpy.data.actions.new(name='all sequences')
-    add_sequence_to_armature('all sequences', armature_object)
+    action_all = bpy.data.actions.new( name='all sequences' )
+    add_sequence_to_armature( 'all sequences', armature_object )
+    
     timeline_markers = bpy.data.scenes[0].timeline_markers
 
     for node in nodes:
-        add_unanimated_to_bones(action, node)
-        add_unanimated_to_bones(action_all, node)
+        add_unanimated_to_bones( action, node )
+        add_unanimated_to_bones( action_all, node )
         # bone: PoseBone = armature_object.pose.bones[node.name]
         # armature_object.animation_data.
         # bone.an
 
     for sequence in sequences:
         print("adding sequence " + sequence.name)
+        
         interval_start: int = sequence.interval_start
         interval_end: int = sequence.interval_end
+        
         action = bpy.data.actions.new(name=sequence.name)
-        add_sequence_to_armature(sequence.name, armature_object)
+        
+        add_sequence_to_armature( sequence.name, armature_object )
 
         int_start: int = round(interval_start / frame_time, None)
         int_end: int = round(interval_end / frame_time, None)
@@ -42,21 +51,27 @@ def create_armature_actions(armature_object: Object, model: WarCraft3Model, fram
         timeline_markers.new(sequence.name, frame=int_end)
 
         for node in nodes:
-            add_actions_to_node(action, frame_time, 0, interval_end, interval_start, node, True)
-            add_actions_to_node(action_all, frame_time, interval_start, interval_end, interval_start, node, False)
+            add_actions_to_node( action, frame_time, 0, interval_end, interval_start, node, True )
+            add_actions_to_node( action_all, frame_time, interval_start, interval_end, interval_start, node, False )
 
 
-def add_unanimated_to_bones(action: Action, node: WarCraft3Node):
+def add_unanimated_to_bones( action: Action, node: WarCraft3Node ):
+    """
+        액션에 전달된 노드의 이름으로 애니메이션 커브 등록
+    """
     bone_name = node.name
 
     # armature_object.pose.bones[node.name]
     data_path = 'pose.bones["' + bone_name + '"]'
-    new_fcurve(action, bone_name, data_path + '.location', 0.0)
-    new_fcurve(action, bone_name, data_path + '.rotation_euler', 0.0)
-    new_fcurve(action, bone_name, data_path + '.scale', 1.0)
+    new_fcurve( action, bone_name, data_path + '.location', 0.0 )
+    new_fcurve( action, bone_name, data_path + '.rotation_euler', 0.0 )
+    new_fcurve( action, bone_name, data_path + '.scale', 1.0 )
 
 
-def add_actions_to_node(action: Action, frame_time: float, sequence_start: int, interval_end: int, interval_start: int, node: WarCraft3Node, is_new_action: bool):
+def add_actions_to_node( action: Action, frame_time: float, sequence_start: int, interval_end: int, interval_start: int, node: WarCraft3Node, is_new_action: bool ):
+    """
+        액션에 애니메이션 데이터 등록
+    """
     bone_name = node.name
     # dataPath = 'pose.bones["' + bone_name + '"]'
     translations: Optional[WarCraft3Transformation] = node.translations
@@ -68,6 +83,7 @@ def add_actions_to_node(action: Action, frame_time: float, sequence_start: int, 
                                      frame_time, interval_end, interval_start, sequence_start,
                                      translations, 0.0,
                                      lambda translation: translation, is_new_action)
+        
     if rotations:
         create_transformation_curves(action, bone_name, 'rotation_euler',
                                      frame_time, interval_end, interval_start,
@@ -81,38 +97,48 @@ def add_actions_to_node(action: Action, frame_time: float, sequence_start: int, 
                                      lambda scaling: scaling, is_new_action)
 
 
-def create_transformation_curves(action: Action, bone_name: str, data_path_addition: str, frame_time,
-                                 interval_end: int, interval_start: int, sequence_start: int,
-                                 transformations: WarCraft3Transformation, transformation_zero_value, value_conversion, is_new_action: bool):
+def create_transformation_curves( action: Action,
+                                  bone_name: str, data_path_addition: str,
+                                  frame_time,
+                                  interval_end: int, interval_start: int,
+                                  sequence_start: int,
+                                  transformations: WarCraft3Transformation,
+                                  transformation_zero_value,
+                                  value_conversion,
+                                  is_new_action: bool ):
+    """
+        커브생성
+    """
     data_path = 'pose.bones["' + bone_name + '"].' + data_path_addition
-    starting_keyframe = round(sequence_start / frame_time, 0)
+    starting_keyframe = round( sequence_start / frame_time, 0 )
     interpolation_type = constants.INTERPOLATION_TYPE_NAMES[transformations.interpolation_type]
 
     if is_new_action:
-        transformation_fcurves = [None, None, None]
+        transformation_fcurves = [ None, None, None ]
     else:
-        current_fcurve = action.fcurves.find(data_path)
-        current_fcurve_index = action.fcurves.values().index(current_fcurve)
+        current_fcurve = action.fcurves.find( data_path )
+        current_fcurve_index = action.fcurves.values().index( current_fcurve )
 
-        transformation_fcurves = [action.fcurves[current_fcurve_index], action.fcurves[current_fcurve_index + 1],
-                                  action.fcurves[current_fcurve_index + 2]]
+        transformation_fcurves = [ action.fcurves[current_fcurve_index + 0],
+                                   action.fcurves[current_fcurve_index + 1], 
+                                   action.fcurves[current_fcurve_index + 2] ]
 
         # set the keyframe before and after the sequence to T-pose not ge weird
         # transitions between actions in "all sequences" in the case transformation is not set
-        trans_zero_values = [transformation_zero_value, transformation_zero_value, transformation_zero_value]
-        end_keyframe = round(interval_end / frame_time, 0)
-        insert_xyz_keyframe_points(interpolation_type, transformation_fcurves, starting_keyframe - 1, trans_zero_values)
-        insert_xyz_keyframe_points(interpolation_type, transformation_fcurves, end_keyframe + 1, trans_zero_values)
+        trans_zero_values = [ transformation_zero_value, transformation_zero_value, transformation_zero_value ]
+        end_keyframe = round( interval_end / frame_time, 0 )
+        insert_xyz_keyframe_points( interpolation_type, transformation_fcurves, starting_keyframe - 1, trans_zero_values )
+        insert_xyz_keyframe_points( interpolation_type, transformation_fcurves, end_keyframe + 1, trans_zero_values )
 
-    for index in range(transformations.tracks_count):
+    for index in range( transformations.tracks_count ):
         time = transformations.times[index]
         transformation = transformations.values[index]
-        converted_values = value_conversion(transformation)
+        converted_values = value_conversion( transformation )
 
         if interval_start <= time <= interval_end:
 
             if time == interval_start and not is_new_action:
-                end_keyframe = round(interval_end / frame_time, 0)
+                end_keyframe = round( interval_end / frame_time, 0 )
 
                 # set the keyframes before and after the sequence to so same as the first keyframe not ge weird
                 # transitions between actions in "all sequences"
@@ -123,40 +149,52 @@ def create_transformation_curves(action: Action, bone_name: str, data_path_addit
 
             real_time = round((time + sequence_start - interval_start) / frame_time, 0)
 
-            transformation_fcurves = set_new_curves(action, bone_name, data_path, transformation_fcurves,
+            transformation_fcurves = set_new_curves( action, bone_name, data_path, transformation_fcurves,
                                                     starting_keyframe)
             insert_xyz_keyframe_points(interpolation_type, transformation_fcurves, real_time, converted_values)
 
-    set_new_curves(action, bone_name, data_path, transformation_fcurves, starting_keyframe, transformation_zero_value)
+    set_new_curves( action, bone_name, data_path, transformation_fcurves, starting_keyframe, transformation_zero_value )
 
 
-def set_new_curves(action: Action, bone_name: str, data_path: str, fcurves, starting_keyframe, value=-1.0):
-    for i in range(len(fcurves)):
+def set_new_curves( action: Action, bone_name: str, data_path: str, fcurves: list[FCurve], starting_keyframe, value=-1.0 ):
+    """
+        새로운 FCurve 등록
+    """
+    for i in range( len( fcurves ) ):
         if not fcurves[i]:
-            fcurves[i] = action.fcurves.new(data_path, index=i, action_group=bone_name)
+            fcurves[i] = action.fcurves.new( data_path, index=i, action_group=bone_name )
             if value != -1.0:
-                fcurves[i].keyframe_points.insert(starting_keyframe, value)
+                key: Keyframe = fcurves[i].keyframe_points.insert( starting_keyframe, value )
             # try:
             #     fcurves[i] = action.fcurves.new(data_path, index=i, action_group=bone_name)
             #     if value != -1.0:
             #         fcurves[i].keyframe_points.insert(starting_keyframe, value)
             # except:
             #     print("fcurve did already exist")
+            
     return fcurves
 
 
-def insert_xyz_keyframe_points(interpolation_type, fcurves, real_time, movement):
-    for i in range(len(fcurves)):
-        keyframe = fcurves[i].keyframe_points.insert(real_time, movement[i])
+def insert_xyz_keyframe_points( interpolation_type, fcurves: list[FCurve], real_time: float, movement ):
+    """
+        Keyframe 등록
+    """
+    for i in range( len( fcurves ) ):
+        keyframe = fcurves[i].keyframe_points.insert( real_time, movement[i] )
         keyframe.interpolation = interpolation_type
 
 
-def new_fcurve(action: Action, bone_name: str, data_path: str, value:float):
-    fcurves: List = []
+def new_fcurve( action: Action, bone_name: str, data_path: str, value: float ):
+    """
+        Action에 FCurve 3개 생성 후 목록 반환
+    """
+    fcurves: list[FCurve] = []
+    
     for i in range(3):
-        fcurve: FCurve = action.fcurves.new(data_path, index=i, action_group=bone_name)
-        fcurve.keyframe_points.insert(0, value)
-        fcurves.append(fcurve)
+        fcurve: FCurve = action.fcurves.new( data_path, index=i, action_group=bone_name )
+        fcurve.keyframe_points.insert( 0, value )
+        fcurves.append( fcurve )
+        
     return fcurves
     # try:
     #     for i in range(3):
@@ -166,7 +204,10 @@ def new_fcurve(action: Action, bone_name: str, data_path: str, value:float):
     #     print("fcurve did already exist")
 
 
-def add_sequence_to_armature(sequence_name, armature_object):
+def add_sequence_to_armature( sequence_name: str, armature_object: Object ):
+    """
+        사용자 데이터내의 시퀀스리스트에 시퀀스등록
+    """
     warcraft3data = armature_object.data.warcraft_3
     sequence = warcraft3data.sequencesList.add()
     sequence.name = sequence_name

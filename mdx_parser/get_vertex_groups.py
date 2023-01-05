@@ -1,4 +1,4 @@
-def get_vertex_groups(matrix_groups, matrix_groups_sizes, matrix_indices):
+def get_vertex_groups( matrix_groups, matrix_groups_sizes, matrix_indices ):
     i = 0
     matrix = []
 

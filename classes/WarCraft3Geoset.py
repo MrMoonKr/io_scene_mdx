@@ -5,12 +5,12 @@ from .WarCraft3Vertex import WarCraft3Vertex
 
 class WarCraft3Geoset:
     def __init__(self):
-        self.name = None
-        self.wc3_vertices: List[WarCraft3Vertex] = []
-        self.vertices: List[List[float]] = []
-        self.normals: List[float] = []
-        self.triangles: List[float] = []
-        self.uvs = []
+        self.name: str = None
+        self.wc3_vertices: list[WarCraft3Vertex] = []
+        self.vertices: list[list[float]] = []
+        self.normals: list[float] = []
+        self.triangles: list[float] = []
+        self.uvs: list[float] = []
         self.material_id = 0
         self.vertex_groups: List[List[int]] = []
         self.vertex_groups_ids: Optional[List[int]] = None

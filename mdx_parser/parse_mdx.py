@@ -22,8 +22,8 @@ def parse_mdx( data: bytes, import_properties: MDXImportProperties ):
     """
         바이트버퍼 형태의 mdx 파일데이터 파싱
     """
-    data_size = len(data)
-    br = binary_reader.Reader(data)
+    data_size = len( data )
+    br = binary_reader.Reader( data )
     data_id = br.getid( constants.CHUNK_MDX_MODEL ) # 파일헤더ID 'MDLX'
     print( 'File Header ID : ' + data_id )
     
@@ -31,7 +31,7 @@ def parse_mdx( data: bytes, import_properties: MDXImportProperties ):
     model.file = import_properties.mdx_file_path
 
     while br.offset < data_size:
-        chunk_id = br.getid(constants.SUB_CHUNKS_MDX_MODEL, debug=True)
+        chunk_id = br.getid( constants.SUB_CHUNKS_MDX_MODEL, debug=True )
         chunk_size = br.getf('<I')[0]
         chunk_data: bytes = data[ br.offset : br.offset + chunk_size ]
         br.skip( chunk_size )
