@@ -68,12 +68,9 @@ def parse_mdx( data: bytes, import_properties: MDXImportProperties ):
         
         elif chunk_id == constants.CHUNK_PIVOT_POINT:
             model.pivot_points.extend( parse_pivot_points( chunk_data ) )
+
         
-            
-            
-            
-            
-            
+        
         # elif chunk_id == constants.CHUNK_EVENT_OBJECT:
         #     model.nodes.extend(parse_events(chunk_data))
             

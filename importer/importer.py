@@ -30,7 +30,7 @@ def make_heirarchy_nodes( model: WarCraft3Model ):
     pivot_points: list[list[float]] = model.pivot_points
     
     for nodeIndex, node in enumerate( nodes ):
-        print( str( nodeIndex ) + " : " + node.name )
+        #print( str( nodeIndex ) + " : " + node.name )
         if node.parent is None:
             node.part = None
         else:
