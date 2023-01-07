@@ -20,7 +20,7 @@ def parse_bones( data: bytes ) -> list[WarCraft3Node]:
         
         parse_node( br, bone )
         bone.geoset_id = br.getf('<I')[0]
-        geoset_animation_id = br.getf('<I')[0]
+        bone.geoset_animation_id = br.getf('<I')[0]
         
         nodes.append( bone )
         

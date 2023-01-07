@@ -1,7 +1,7 @@
 from typing import List, Dict, Set
 
 import bpy
-from bpy.types import Object, BoneGroup
+from bpy.types import Object, Armature, ArmatureEditBones, BoneGroup
 
 from ..classes.WarCraft3Model import WarCraft3Model
 from ..classes.WarCraft3Node import WarCraft3Node
@@ -13,17 +13,19 @@ def create_armature_object( model: WarCraft3Model, bpy_mesh_objects: List[Object
     """
     print("creating armature")
     
-    nodes = model.nodes
-    pivot_points = model.pivot_points
+    nodes: list[WarCraft3Node] = model.nodes
+    pivot_points: list[list[float]] = model.pivot_points
     
-    # bpy_armature: bpy.types.Armature = bpy.data.armatures.new(model.name + ' Nodes')
-    bpy_armature_object = get_bpy_armature_object( model.name + ' Nodes' )
-    bpy_armature: bpy.types.Armature = bpy_armature_object.data
-    add_mesh_modifier( bpy_armature_object, bpy_mesh_objects )
+    # Armature Object 생성
+    
+    bpy_armature_object: Object = get_bpy_armature_object( model.name + ' Armature' )
+    bpy_armature: Armature = bpy_armature_object.data
     # bpy_armature.display_type = 'STICK'
+    
+    # Armature에 EditBone들 생성
 
     bone_types = get_bone_type_dict( bone_size, bpy_armature.edit_bones, nodes, pivot_points )
-    # bone_types = add_and_get_node_bone_dict(bone_size, bpy_armature.edit_bones, nodes, pivot_points)
+    # bone_types = add_and_get_node_bone_dict( bone_size, bpy_armature.edit_bones, nodes, pivot_points )
 
     print( bpy_armature_object.data.edit_bones[0] )
 
@@ -32,7 +34,8 @@ def create_armature_object( model: WarCraft3Model, bpy_mesh_objects: List[Object
         if node.parent is not None:
             parent = bpy_armature.edit_bones[ node.parent ]
             e_bone.parent = parent
-            # bone.use_connect = True
+            #e_bone.use_connect = True
+            #parent.tail = e_bone.head
 
     for a_bone in bpy_armature.bones:
         a_bone.warcraft_3.nodeType = bone_types[a_bone.name].upper()
@@ -48,6 +51,8 @@ def create_armature_object( model: WarCraft3Model, bpy_mesh_objects: List[Object
 
     bpy.ops.object.mode_set( mode='OBJECT' )
     bpy.context.active_object.select_set( False )
+    
+    add_mesh_modifier( bpy_armature_object, bpy_mesh_objects )
 
     return bpy_armature_object
 
@@ -55,11 +60,17 @@ def create_armature_object( model: WarCraft3Model, bpy_mesh_objects: List[Object
 # def get_bpy_armature_object(bpy_armature1: bpy.types.Armature, name: str) -> Object:
 def get_bpy_armature_object( name: str ) -> Object:
     """
-        blender armature 생성
+        blender armature 생성 후 EditMode로 전환 후 반환
     """
+    
+    # Armature 생성
     bpy_armature: bpy.types.Armature = bpy.data.armatures.new( name )
     bpy_armature_object: bpy.types.Object = bpy.data.objects.new( name, bpy_armature )
+    
+    # Scene의 Collection내에 등록
     bpy.context.scene.collection.objects.link( bpy_armature_object )
+    
+    # 'Edit' 모드 전환
     bpy_armature_object.select_set( True )
     # bpy_armature_object.show_in_front = True
     # bpy_armature_object.mode = 'EDIT'
@@ -70,13 +81,16 @@ def get_bpy_armature_object( name: str ) -> Object:
     return bpy_armature_object
 
 
-def add_mesh_modifier(bpy_armature_object: bpy.types.Object, bpy_mesh_objects: List[bpy.types.Object]):
+def add_mesh_modifier( bpy_armature_object: Object, bpy_mesh_objects: list[Object] ):
+    """
+        Mesh오브젝트에 Armature모디파이어 등록
+    """
     for mesh in bpy_mesh_objects:
-        mesh.modifiers.new(name='Armature', type='ARMATURE')
+        mesh.modifiers.new( name='Armature', type='ARMATURE' )
         mesh.modifiers['Armature'].object = bpy_armature_object
 
 
-def set_vertex_group_names(bpy_armature: bpy.types.Armature, bpy_mesh_objects: List[bpy.types.Object]):
+def set_vertex_group_names( bpy_armature: bpy.types.Armature, bpy_mesh_objects: List[bpy.types.Object] ):
     for mesh in bpy_mesh_objects:
         for vertexGroup in mesh.vertex_groups:
             vertex_group_index = int(vertexGroup.name)
@@ -84,18 +98,26 @@ def set_vertex_group_names(bpy_armature: bpy.types.Armature, bpy_mesh_objects: L
             vertexGroup.name = bone_name
 
 
-def get_bone_group_dict(node_to_bone: Dict[WarCraft3Node, bpy.types.EditBone], bpy_armature_object: Object):
-    bone_groups: Dict[str, BoneGroup] = {}
+def get_bone_group_dict( node_to_bone: dict[WarCraft3Node, bpy.types.EditBone],
+                         bpy_armature_object: Object ) -> dict[str, bpy.types.BoneGroups]:
+    """
+        BoneGruops 룩업테이블 구성.   
+        BoneGroup은 같은 색깔로 표시되는 Bone Collection임.
+    """
+    bone_groups: dict[str, BoneGroup] = {}
     # node_types = collect_node_types(bone_types)
-    node_types: List[str] = []
-    for index, node in enumerate(node_to_bone):
+    node_types: list[str] = []
+    
+    # 노드타입들 추출
+    for index, node in enumerate( node_to_bone ):
         if node.node_type not in node_types:
-            node_types.append(node.node_type)
+            node_types.append( node.node_type )
     node_types.sort()
 
     for nodeType in node_types:
-        bone_group = get_new_bone_group(nodeType, bpy_armature_object.pose.bone_groups)
+        bone_group = get_new_bone_group( nodeType, bpy_armature_object.pose.bone_groups )
         bone_groups[nodeType] = bone_group
+        
     return bone_groups
 
 
@@ -115,46 +137,77 @@ def get_bone_group_dict(bone_types: Dict[str, str], bpy_armature_object: Object)
     return bone_groups
 
 
-def get_bone_type_dict(bone_size: float, edit_bones: bpy.types.ArmatureEditBones, nodes: List[WarCraft3Node], pivot_points: List[List[float]]) \
-        -> Dict[str, str]:
-    bone_types: Dict[str, str] = {}
-    for indexNode, node in enumerate(nodes):
-        node_position = pivot_points[indexNode]
+def get_bone_type_dict( bone_size: float,
+                        edit_bones: ArmatureEditBones,
+                        nodes: list[WarCraft3Node],
+                        pivot_points: list[list[float]] 
+                        ) -> Dict[str, str]:
+    """
+        W3Node에 해당하는 EditBone 생성 후 룩업테이블( 본이름, 노드타입 )로 반환
+    """
+    bone_types: dict[str, str] = {}
+    
+    for nodeIndex, node in enumerate( nodes ):
+        node_position = pivot_points[ nodeIndex ]
+        
         bone_name = node.name
         if bone_name in bone_types.keys():
             bone_name = bone_name + ".001"
             if bone_name in bone_types.keys():
                 bone_name = bone_name + ".002"
             node.name = bone_name
-        bone = edit_bones.new(bone_name)
+            
+        bone_parent = node.parent
+        node_parent: WarCraft3Node = None
+        if bone_parent is not None: 
+            node_parent = nodes[ bone_parent ]
+
+        print( "노드이름 : ( " + str(nodeIndex) + " ) "  + node.name + ", 부모 : " + str( bone_parent ) )
+            
+        bone = edit_bones.new( bone_name )
         bone.head = node_position
         bone.tail = node_position
+        #bone.tail[0] += bone_size
         bone.tail[1] += bone_size
+        #bone.tail[2] += bone_size
+
+        
         bone_types[bone_name] = node.node_type
 
     return bone_types
 
 
-def add_and_get_node_bone_dict(bone_size: float, edit_bones: bpy.types.ArmatureEditBones, nodes: List[WarCraft3Node], pivot_points: List[List[float]]) \
-        -> Dict[WarCraft3Node, bpy.types.EditBone]:
-    node_to_bone: Dict[WarCraft3Node, bpy.types.EditBone] = {}
-    bone_names: Set[str] = set()
+def add_and_get_node_bone_dict( bone_size: float,
+                                edit_bones: bpy.types.ArmatureEditBones,
+                                nodes: List[WarCraft3Node],
+                                pivot_points: List[List[float]] 
+                                ) -> dict[WarCraft3Node, bpy.types.EditBone]:
+    """
+        W3Node에 해당하는 EditBone 생성 후 룩업테이블로 반환
+    """
+    node_to_bone: dict[WarCraft3Node, bpy.types.EditBone] = {}
+    bone_names: set[str] = set()
 
-    for indexNode, node in enumerate(nodes):
-        node_position = pivot_points[indexNode]
+    for indexNode, node in enumerate( nodes ):
+        node_position = pivot_points[ indexNode ]
+        
         bone_name = node.name
         if bone_name in bone_names:
             bone_name = bone_name + ".001"
             if bone_name in bone_names:
                 bone_name = bone_name + ".002"
             node.name = bone_name
-        bone = edit_bones.new(bone_name)
+            
+        bone_parent = node.parent
+            
+        bone = edit_bones.new( bone_name )
         bone.head = node_position
         bone.tail = node_position
         # bone.tail[2] += bone_size
         bone.tail[1] += bone_size
-        bone_names.add(bone_name)
-        node_to_bone[node] = bone
+        bone_names.add( bone_name )
+        
+        node_to_bone[ node ] = bone
 
     return node_to_bone
 
@@ -164,10 +217,12 @@ def collect_node_types( node_to_bone: Dict[WarCraft3Node, bpy.types.EditBone] ) 
         노드타입들 모은다
     """
     node_types: List[str] = []
+    
     for index, bone in enumerate( node_to_bone ):
         if bone.node_type not in node_types:
             node_types.append( bone.node_type )
     node_types.sort()
+    
     return node_types
 
 
@@ -183,14 +238,16 @@ def collect_node_types( bone_types: Dict[str, str] ) -> List[str]:
     return node_types
 
 
-def get_new_bone_group(nodeType: str, bone_groups: bpy.types.BoneGroups) -> BoneGroup:
-    bone_group: bpy.types.BoneGroup = bone_groups.get(nodeType + 's')
+def get_new_bone_group( nodeType: str, bone_groups: bpy.types.BoneGroups ) -> BoneGroup:
+    """
+        특정 종류의 BoneGroup 조회. 없으면 생성
+    """
+    bone_group: bpy.types.BoneGroup = bone_groups.get( nodeType + 's')
+    
     if bone_group is None:
-        bone_group = bone_groups.new(name=nodeType + 's')
-        # bone_group: bpy.types.BoneGroup = bpy.types.BoneGroups.new(nodeType + 's')
-        # bone_group: bpy.types.BoneGroup = bpy.types.BoneGroup()
-        bone_group.color_set = get_bone_group_color(nodeType)
-        # bone_group.name = nodeType + 's'
+        bone_group = bone_groups.new( name=nodeType + 's' )
+        bone_group.color_set = get_bone_group_color( nodeType )
+
     return bone_group
 
 
@@ -204,7 +261,10 @@ def get_new_bone_group11(nodeType: str, bone_groups: bpy.types.BoneGroups) -> Bo
     return bone_group
 
 
-def get_bone_group_color(nodeType) -> str:
+def get_bone_group_color( nodeType ) -> str:
+    """
+        특정 노드타입의 BoneGroup에 사용할 컬러셋 이름 조회
+    """
     if nodeType == 'bone':
         return 'THEME04'
     elif nodeType == 'attachment':

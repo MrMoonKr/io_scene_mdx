@@ -68,9 +68,15 @@ def add_unanimated_to_bones( action: Action, node: WarCraft3Node ):
     new_fcurve( action, bone_name, data_path + '.scale', 1.0 )
 
 
-def add_actions_to_node( action: Action, frame_time: float, sequence_start: int, interval_end: int, interval_start: int, node: WarCraft3Node, is_new_action: bool ):
+def add_actions_to_node( action: Action,
+                         frame_time: float,
+                         sequence_start: int,
+                         interval_end: int,
+                         interval_start: int,
+                         node: WarCraft3Node,
+                         is_new_action: bool ):
     """
-        액션에 애니메이션 데이터 등록
+        블랜더 Action에 애니메이션 데이터 등록
     """
     bone_name = node.name
     # dataPath = 'pose.bones["' + bone_name + '"]'
@@ -79,22 +85,34 @@ def add_actions_to_node( action: Action, frame_time: float, sequence_start: int,
     scalings: Optional[WarCraft3Transformation] = node.scalings
 
     if translations:
-        create_transformation_curves(action, bone_name, 'location',
-                                     frame_time, interval_end, interval_start, sequence_start,
-                                     translations, 0.0,
-                                     lambda translation: translation, is_new_action)
+        create_transformation_curves( action,
+                                      bone_name, 'location',
+                                      frame_time,
+                                      interval_end, interval_start, 
+                                      sequence_start,
+                                      translations, 0.0,
+                                      lambda translation: translation,
+                                      is_new_action )
         
     if rotations:
-        create_transformation_curves(action, bone_name, 'rotation_euler',
-                                     frame_time, interval_end, interval_start,
-                                     sequence_start, rotations, 0.0,
-                                     lambda rotation: (mathutils.Quaternion(mathutils.Vector(rotation)).to_euler('XYZ')), is_new_action)
+        create_transformation_curves( action, 
+                                      bone_name, 'rotation_euler',
+                                      frame_time,
+                                      interval_end, interval_start, 
+                                      sequence_start, 
+                                      rotations, 0.0,
+                                      lambda rotation: ( mathutils.Quaternion( mathutils.Vector( rotation ) ).to_euler('XYZ') ),
+                                      is_new_action )
 
     if scalings:
-        create_transformation_curves(action, bone_name, 'scale',
-                                     frame_time, interval_end, interval_start, sequence_start,
-                                     scalings, 1.0,
-                                     lambda scaling: scaling, is_new_action)
+        create_transformation_curves( action, 
+                                      bone_name, 'scale',
+                                      frame_time, 
+                                      interval_end, interval_start, 
+                                      sequence_start,
+                                      scalings, 1.0, 
+                                      lambda scaling: scaling, 
+                                      is_new_action )
 
 
 def create_transformation_curves( action: Action,
@@ -110,6 +128,7 @@ def create_transformation_curves( action: Action,
         커브생성
     """
     data_path = 'pose.bones["' + bone_name + '"].' + data_path_addition
+    
     starting_keyframe = round( sequence_start / frame_time, 0 )
     interpolation_type = constants.INTERPOLATION_TYPE_NAMES[transformations.interpolation_type]
 
@@ -119,14 +138,15 @@ def create_transformation_curves( action: Action,
         current_fcurve = action.fcurves.find( data_path )
         current_fcurve_index = action.fcurves.values().index( current_fcurve )
 
-        transformation_fcurves = [ action.fcurves[current_fcurve_index + 0],
-                                   action.fcurves[current_fcurve_index + 1], 
-                                   action.fcurves[current_fcurve_index + 2] ]
+        transformation_fcurves = [ action.fcurves[ current_fcurve_index + 0 ],
+                                   action.fcurves[ current_fcurve_index + 1 ], 
+                                   action.fcurves[ current_fcurve_index + 2 ] ]
 
         # set the keyframe before and after the sequence to T-pose not ge weird
         # transitions between actions in "all sequences" in the case transformation is not set
         trans_zero_values = [ transformation_zero_value, transformation_zero_value, transformation_zero_value ]
         end_keyframe = round( interval_end / frame_time, 0 )
+        
         insert_xyz_keyframe_points( interpolation_type, transformation_fcurves, starting_keyframe - 1, trans_zero_values )
         insert_xyz_keyframe_points( interpolation_type, transformation_fcurves, end_keyframe + 1, trans_zero_values )
 
@@ -142,9 +162,9 @@ def create_transformation_curves( action: Action,
 
                 # set the keyframes before and after the sequence to so same as the first keyframe not ge weird
                 # transitions between actions in "all sequences"
-                insert_xyz_keyframe_points(interpolation_type, transformation_fcurves, starting_keyframe - 1,
+                insert_xyz_keyframe_points( interpolation_type, transformation_fcurves, starting_keyframe - 1,
                                            converted_values)
-                insert_xyz_keyframe_points(interpolation_type, transformation_fcurves, end_keyframe + 1,
+                insert_xyz_keyframe_points( interpolation_type, transformation_fcurves, end_keyframe + 1,
                                            converted_values)
 
             real_time = round((time + sequence_start - interval_start) / frame_time, 0)
@@ -158,7 +178,7 @@ def create_transformation_curves( action: Action,
 
 def set_new_curves( action: Action, bone_name: str, data_path: str, fcurves: list[FCurve], starting_keyframe, value=-1.0 ):
     """
-        새로운 FCurve 등록
+        블렌더 Action에 새로운 FCurve들을 전달된 본의 데이터패스에 등록
     """
     for i in range( len( fcurves ) ):
         if not fcurves[i]:
@@ -190,7 +210,7 @@ def new_fcurve( action: Action, bone_name: str, data_path: str, value: float ):
     """
     fcurves: list[FCurve] = []
     
-    for i in range(3):
+    for i in range( 3 ):
         fcurve: FCurve = action.fcurves.new( data_path, index=i, action_group=bone_name )
         fcurve.keyframe_points.insert( 0, value )
         fcurves.append( fcurve )
