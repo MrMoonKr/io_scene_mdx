@@ -44,12 +44,17 @@ def set_team_color_property(self, context):
     self.teamColor = constants.TEAM_COLORS[self.setTeamColor]
 
 
-def set_bone_node_type(self, context):
+def set_bone_node_type( self: bpy.types.bpy_struct, context: bpy.types.Context ) -> None:
+    '''
+        Set the bone node type and assign it to the appropriate bone group.
+        This function checks the active bone's node type and assigns it to a bone group
+        based on the node type. If the bone group does not exist, it creates a new
+    '''
     bone = context.active_bone
     if bone:
-        node_type = bone.warcraft_3.nodeType
-        bpy_object = context.object
-        bone_group = bpy_object.pose.bone_groups.get(node_type.lower() + 's', None)
+        node_type   = bone.warcraft_3.nodeType
+        bpy_object  = context.object
+        bone_group  = bpy_object.pose.bone_groups.get( node_type.lower() + 's', None )
         if not bone_group:
             if node_type in {'BONE', 'ATTACHMENT', 'COLLISION_SHAPE', 'EVENT', 'HELPER'}:
                 bpy.ops.pose.group_add()

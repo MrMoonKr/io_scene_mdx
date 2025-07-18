@@ -3,7 +3,7 @@ bl_info = {
     'name': 'io_scene_mdx',
     'author': 'MrMoonKr & Pavel_Blend & twilac',
     'version': (0, 1, 0),
-    'blender': (2, 80, 0),
+    'blender': (4, 4, 0),
     'category': 'Development', #'category': 'Import-Export',
     'location': 'File > Import',
     'description': 'Import *.mdl/*.mdx files ( 3d models of WarCraft 3 )',
@@ -47,23 +47,23 @@ if "bpy" in locals():
 
 import bpy
 
-from .operators import (
+from operators import (
     WarCraft3OperatorImportMDX,
     WarCraft3OperatorAddSequenceToArmature,
     WarCraft3OperatorRemoveSequenceToArmature,
     WarCraft3OperatorUpdateBoneSettings
 )
 
-from .ui import (
+from ui import (
     WarCraft3PanelBone,
     WarCraft3PanelArmature
 )
 
-from .preferences import (
+from preferences import (
     WarCraft3Preferences
 )
 
-from .props import (
+from props import (
     WarCraft3ArmatureSequenceList,
     WarCraft3ArmatureProperties,
     WarCraft3BoneProperties
@@ -121,5 +121,7 @@ def unregister():
 
 
 if __name__ == "__main__":
+    register()
+elif __name__ == "<run_path>": # for VS Code DevOps
     register()
 
