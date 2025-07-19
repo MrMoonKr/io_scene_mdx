@@ -22,14 +22,30 @@ class WarCraft3OperatorImportMDX( bpy.types.Operator, bpy_extras.io_utils.Import
     bl_options      = {'UNDO'}
 
     filename_ext    = ['.mdx', '.mdl']
-    filter_glob: bpy.props.StringProperty( default='*.mdx;*.mdl', options={'HIDDEN'} ) # type: ignore
-    
-    filepath: bpy.props.StringProperty( name='File Path', maxlen=1024, default='' ) # type: ignore
-    
-    useCustomFPS: bpy.props.BoolProperty(name='Use Custom FPS', default=False) # type: ignore
-    animationFPS: bpy.props.FloatProperty(name='Animation FPS', default=30.0, min=1.0, max=1000.0) # type: ignore
-    boneSize: bpy.props.FloatProperty(name='Bone Size', default=5.0, min=0.0001, max=1000.0) # type: ignore
-    teamColor: bpy.props.FloatVectorProperty( # type: ignore
+    filter_glob: bpy.props.StringProperty( 
+        default='*.mdx;*.mdl',
+        options={'HIDDEN'}
+        ) # type: ignore
+    filepath: bpy.props.StringProperty( 
+        name='File Path',
+        maxlen=1024,
+        default='' 
+        ) # type: ignore
+    useCustomFPS: bpy.props.BoolProperty(
+        name='Use Custom FPS',
+        default=False 
+        ) # type: ignore
+    animationFPS: bpy.props.FloatProperty(
+        name='Animation FPS',
+        default=30.0,
+        min=1.0, max=1000.0
+        ) # type: ignore
+    boneSize: bpy.props.FloatProperty(
+        name='Bone Size',
+        default=5.0,
+        min=0.0001, max=1000.0
+        ) # type: ignore
+    teamColor: bpy.props.FloatVectorProperty(
         name='Team Color',
         default=constants.TEAM_COLORS['RED'],
         min=0.0,
@@ -37,8 +53,8 @@ class WarCraft3OperatorImportMDX( bpy.types.Operator, bpy_extras.io_utils.Import
         size=3,
         subtype='COLOR',
         precision=3
-    )
-    setTeamColor: bpy.props.EnumProperty( # type: ignore
+        ) # type: ignore
+    setTeamColor: bpy.props.EnumProperty(
         items=[
             ('RED', 'Red', ''),
             ('DARK_BLUE', 'Dark Blue', ''),
@@ -57,20 +73,21 @@ class WarCraft3OperatorImportMDX( bpy.types.Operator, bpy_extras.io_utils.Import
         name='Set Team Color',
         update=utils.set_team_color_property,
         default='RED'
-    )
+        ) # type: ignore
 
     def draw( self, context ):
         layout = self.layout
         
         split = layout.split( factor=0.9 )
-        sub_split = split.split(factor=0.5)
-        sub_split.label(text='Team Color:')
-        sub_split.prop(self, 'setTeamColor', text='')
-        split.prop(self, 'teamColor', text='')
-        layout.prop(self, 'boneSize')
-        layout.prop(self, 'useCustomFPS')
+        sub_split = split.split( factor=0.5 )
+        sub_split.label( text='Team Color:' )
+        sub_split.prop( self, 'setTeamColor', text='' )
+        split.prop( self, 'teamColor', text='' )
+        
+        layout.prop( self, 'boneSize' )
+        layout.prop( self, 'useCustomFPS' )
         if self.useCustomFPS:
-            layout.prop(self, 'animationFPS')
+            layout.prop( self, 'animationFPS' )
 
     def execute( self, context ):
         import_properties = MDXImportProperties()
@@ -82,9 +99,9 @@ class WarCraft3OperatorImportMDX( bpy.types.Operator, bpy_extras.io_utils.Import
         import_properties.calculate_frame_time()
         #constants.os_path_separator = os.path
         if ".mdl" in self.filepath:
-            load_mdl(import_properties)
+            load_mdl( import_properties )
         else:
-            load_mdx(import_properties)
+            load_mdx( import_properties )
             
         return {'FINISHED'}
 
@@ -136,10 +153,10 @@ class WarCraft3OperatorUpdateBoneSettings( bpy.types.Operator ):
     bl_options      = {'UNDO'}
 
     def execute( self, context ):
-        object      = context.object
+        object = context.object
         for bone in object.data.bones:
             nodeType    = bone.warcraft_3.nodeType
-            boneGroup   = object.pose.bone_groups.get(nodeType.lower() + 's', None)
+            boneGroup   = object.pose.bone_groups.get( nodeType.lower() + 's', None )
             if not boneGroup:
                 if nodeType in {'BONE', 'ATTACHMENT', 'COLLISION_SHAPE', 'EVENT', 'HELPER'}:
                     bpy.ops.pose.group_add()

@@ -10,21 +10,21 @@ from ..classes.WarCraft3Node import WarCraft3Node
 def create_armature_object( model: WarCraft3Model, bpy_mesh_objects: List[Object], bone_size: float ) -> Object:
     """
         blender armature 생성
-    """
+        """
     print("creating armature")
     
-    nodes: list[WarCraft3Node] = model.nodes
+    nodes: list[WarCraft3Node]      = model.nodes
     pivot_points: list[list[float]] = model.pivot_points
     
     # Armature Object 생성
     
-    bpy_armature_object: Object = get_bpy_armature_object( model.name + ' Armature' )
-    bpy_armature: Armature = bpy_armature_object.data
+    bpy_armature_object: Object     = get_bpy_armature_object( model.name + ' Armature' )
+    bpy_armature: Armature          = bpy_armature_object.data
     # bpy_armature.display_type = 'STICK'
     
     # Armature에 EditBone들 생성
 
-    bone_types = get_bone_type_dict( bone_size, bpy_armature.edit_bones, nodes, pivot_points )
+    bone_types                      = get_bone_type_dict( bone_size, bpy_armature.edit_bones, nodes, pivot_points )
     # bone_types = add_and_get_node_bone_dict( bone_size, bpy_armature.edit_bones, nodes, pivot_points )
 
     print( bpy_armature_object.data.edit_bones[0] )
@@ -61,11 +61,11 @@ def create_armature_object( model: WarCraft3Model, bpy_mesh_objects: List[Object
 def get_bpy_armature_object( name: str ) -> Object:
     """
         blender armature 생성 후 EditMode로 전환 후 반환
-    """
+        """
     
     # Armature 생성
-    bpy_armature: bpy.types.Armature = bpy.data.armatures.new( name )
-    bpy_armature_object: bpy.types.Object = bpy.data.objects.new( name, bpy_armature )
+    bpy_armature: bpy.types.Armature        = bpy.data.armatures.new( name )
+    bpy_armature_object: bpy.types.Object   = bpy.data.objects.new( name, bpy_armature )
     
     # Scene의 Collection내에 등록
     bpy.context.scene.collection.objects.link( bpy_armature_object )
@@ -84,7 +84,7 @@ def get_bpy_armature_object( name: str ) -> Object:
 def add_mesh_modifier( bpy_armature_object: Object, bpy_mesh_objects: list[Object] ):
     """
         Mesh오브젝트에 Armature모디파이어 등록
-    """
+        """
     for mesh in bpy_mesh_objects:
         mesh.modifiers.new( name='Armature', type='ARMATURE' )
         mesh.modifiers['Armature'].object = bpy_armature_object
@@ -144,7 +144,7 @@ def get_bone_type_dict( bone_size: float,
                         ) -> Dict[str, str]:
     """
         W3Node에 해당하는 EditBone 생성 후 룩업테이블( 본이름, 노드타입 )로 반환
-    """
+        """
     bone_types: dict[str, str] = {}
     
     for nodeIndex, node in enumerate( nodes ):

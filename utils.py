@@ -6,9 +6,12 @@ from . import constants
 ACTION_NAME_UNANIMATED = '#UNANIMATED'
 
 
-def set_animation(self, context):
+def set_animation( self: bpy.types.bpy_struct, context: bpy.types.Context ) -> None:
+    '''
+        
+    '''
     set_animation_name = context.armature.warcraft_3.sequencesList[context.armature.warcraft_3.sequencesListIndex].name
-    if len(set_animation_name) and bpy.data.actions.get(set_animation_name, None):
+    if len( set_animation_name ) and bpy.data.actions.get( set_animation_name, None ):
         prepare_action(context, set_animation_name)
         for action in bpy.data.actions:
             for bpy_object in bpy.context.scene.objects:
@@ -30,7 +33,7 @@ def set_animation(self, context):
                     bpy_object.animation_data.action = bpy.data.actions[object_action_name]
 
 
-def prepare_action(context, unanimated):
+def prepare_action( context: bpy.types.Context, unanimated: str ) -> None:
     armature_object = context.object
     if armature_object.animation_data is None:
         armature_object.animation_data_create()
