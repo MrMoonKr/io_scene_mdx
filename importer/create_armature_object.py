@@ -241,7 +241,7 @@ def collect_node_types( bone_types: Dict[str, str] ) -> List[str]:
 def get_new_bone_group( nodeType: str, bone_groups: bpy.types.BoneGroups ) -> BoneGroup:
     """
         특정 종류의 BoneGroup 조회. 없으면 생성
-    """
+        """
     bone_group: bpy.types.BoneGroup = bone_groups.get( nodeType + 's')
     
     if bone_group is None:
