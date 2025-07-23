@@ -6,21 +6,21 @@ from bpy.types import Object, Mesh, Material
 from ..classes.WarCraft3Model import WarCraft3Model
 
 
-def create_mesh_objects( model: WarCraft3Model, bpy_materials: List[Material] ):
+def create_mesh_objects( model: WarCraft3Model, bpy_materials: List[Material] ) -> List[Object]:
     """
         create blender mesh
-    """
+        """
     print("creating mesh")
     
-    bpy_mesh_objects = []
+    bpy_mesh_objects: List[Object] = []
 
     for warCraft3Geoset in model.geosets:
-        bpy_mesh = bpy.data.meshes.new( warCraft3Geoset.name )
-        bpy_object = bpy.data.objects.new( warCraft3Geoset.name, bpy_mesh )
+        bpy_mesh    = bpy.data.meshes.new( warCraft3Geoset.name )
+        bpy_object  = bpy.data.objects.new( warCraft3Geoset.name, bpy_mesh )
         bpy.context.scene.collection.objects.link( bpy_object )
         bpy_mesh.from_pydata( warCraft3Geoset.vertices, (), warCraft3Geoset.triangles )
         bpy_mesh.uv_layers.new()
-        uv_layer = bpy_mesh.uv_layers.active.data
+        uv_layer    = bpy_mesh.uv_layers.active.data
 
         for tris in bpy_mesh.polygons:
             for loopIndex in range( tris.loop_start, tris.loop_start + tris.loop_total ):

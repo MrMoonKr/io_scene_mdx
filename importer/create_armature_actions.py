@@ -227,7 +227,7 @@ def new_fcurve( action: Action, bone_name: str, data_path: str, value: float ):
 def add_sequence_to_armature( sequence_name: str, armature_object: Object ):
     """
         사용자 데이터내의 시퀀스리스트에 시퀀스등록
-    """
-    warcraft3data = armature_object.data.warcraft_3
-    sequence = warcraft3data.sequencesList.add()
-    sequence.name = sequence_name
+        """
+    warcraft3data   = armature_object.data.warcraft_3
+    sequence        = warcraft3data.sequencesList.add()
+    sequence.name   = sequence_name

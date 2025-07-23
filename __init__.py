@@ -7,8 +7,8 @@ bl_info = {
     'category': 'Development', #'category': 'Import-Export',
     'location': 'File > Import',
     'description': 'Import *.mdl/*.mdx files ( 3d models of WarCraft 3 )',
-    'doc_url': 'https://github.com/tw1lac/Blender_WarCraft-3',
-    'tracker_url': 'https://github.com/tw1lac/Blender_WarCraft-3/issues'
+    'doc_url': 'https://github.com/MrMoonKr/io_scene_mdx',
+    'tracker_url': 'https://github.com/MrMoonKr/io_scene_mdx/issues'
 }
 
 
@@ -70,7 +70,7 @@ from props import (
 )
 
 
-def menu_import_mdx( self, context ):
+def menu_import_mdx( self, context: bpy.types.Context ):
     self.layout.operator( WarCraft3OperatorImportMDX.bl_idname, text='Warcraft 3 (.mdl/.mdx)' )
 
 
@@ -96,13 +96,13 @@ def register():
     
     for cls in prop_classes:
         bpy.utils.register_class( cls )
-        
-    WarCraft3ArmatureProperties.bpy_type.warcraft_3 = bpy.props.PointerProperty(type=WarCraft3ArmatureProperties)
-    WarCraft3BoneProperties.bpy_type.warcraft_3 = bpy.props.PointerProperty(type=WarCraft3BoneProperties)
 
     for cls in wc_classes:
         bpy.utils.register_class( cls )
         
+    WarCraft3ArmatureProperties.bpy_type.warcraft_3 = bpy.props.PointerProperty(type=WarCraft3ArmatureProperties)
+    WarCraft3BoneProperties.bpy_type.warcraft_3     = bpy.props.PointerProperty(type=WarCraft3BoneProperties)
+    
     bpy.types.TOPBAR_MT_file_import.append( menu_import_mdx )
 
 def unregister():

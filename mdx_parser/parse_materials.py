@@ -7,8 +7,8 @@ from .parse_layers import parse_layers
 
 def parse_materials( data: bytes, version: int ) -> list[WarCraft3Material]:
     """
-        'MTLS' chunk data
-    """
+        'MTLS' chunk data. 재질 데이터 파싱
+        """
     br = binary_reader.Reader( data )
     data_size = len( data )
 
@@ -17,9 +17,9 @@ def parse_materials( data: bytes, version: int ) -> list[WarCraft3Material]:
     while br.offset < data_size:
         material = WarCraft3Material()
         
-        inclusive_size = br.getf('<I')[0]
-        priority_plane = br.getf('<I')[0]
-        render_mode = br.getf('<I')[0]
+        inclusive_size  = br.getf('<I')[0]
+        priority_plane  = br.getf('<I')[0]
+        render_mode     = br.getf('<I')[0]
 
         # if constants.MDX_CURRENT_VERSION > 800:
         # if version > 800:

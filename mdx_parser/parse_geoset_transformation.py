@@ -10,25 +10,25 @@ from .. import constants
 def parse_geoset_transformation( r: Reader, value_format: str ) -> WarCraft3Transformation:
     """
         node animation data
-    """
+        """
     transformation = WarCraft3Transformation()
     
-    transformation.tracks_count = r.getf('<I')[0]
-    transformation.interpolation_type = r.getf('<I')[0]
-    global_sequence_id = r.getf('<I')[0]
+    transformation.tracks_count         = r.getf('<I')[0] # Keyframe Count
+    transformation.interpolation_type   = r.getf('<I')[0] # Keyframe Interpolation Type
+    global_sequence_id                  = r.getf('<I')[0] # Unknown
 
     for _ in range( transformation.tracks_count ): # read keyframes
-        time: int = r.getf('<I')[0] # keyframe time
-        values = r.getf( value_format ) # keyframe values
+        time        = r.getf('<I')[0] # keyframe time
+        values      = r.getf( value_format ) # keyframe values
 
         if value_format == '<4f':
-            values = ( values[3], values[0], values[1], values[2] ) # rotation correction ( w, x, y, z )
+            values  = ( values[3], values[0], values[1], values[2] ) # rotation correction ( w, x, y, z )
 
         transformation.times.append( time )
         transformation.values.append( values )
 
         if transformation.interpolation_type > constants.INTERPOLATION_TYPE_LINEAR:
-            in_tan = r.getf( value_format )
+            in_tan  = r.getf( value_format )
             out_tan = r.getf( value_format )
 
     return transformation

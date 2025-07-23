@@ -14,8 +14,8 @@ from ..preferences import WarCraft3Preferences
 
 def create_material( model: WarCraft3Model, team_color: str ) -> List[Material]:
     """
-        create blender material 
-    """
+        create blender material from model
+        """
     print( "creating materials" )
     # preferences = bpy.context.preferences.addons.get('io_scene_warcraft_3') #['io_scene_warcraft_3'].preferences
     addon: bpy.types.Addon = bpy.context.preferences.addons.get('io_scene_mdx')
@@ -32,18 +32,18 @@ def create_material( model: WarCraft3Model, team_color: str ) -> List[Material]:
 
     bpy_images: List[Image] = []
     for texture in model.textures:
-        bpy_image = get_image(folders, team_color, texture, texture_ext)
-        bpy_images.append(bpy_image)
+        bpy_image = get_image( folders, team_color, texture, texture_ext )
+        bpy_images.append( bpy_image )
 
-    bpy_materials = []
+    bpy_materials: List[Material] = []
     for material in model.materials:
         bpy_images_of_layer: List[Image] = []
         for layer in material.layers:
-            bpy_images_of_layer.append(bpy_images[layer.texture_id])
+            bpy_images_of_layer.append( bpy_images[ layer.texture_id ] )
 
-        bpy_material = create_bpy_material(bpy_images_of_layer, material)
+        bpy_material = create_bpy_material( bpy_images_of_layer, material )
 
-        bpy_materials.append(bpy_material)
+        bpy_materials.append( bpy_material )
 
     # bpy_material = bpy_materials[warCraft3Mesh.material_id]
     # bpyMesh.materials.append(bpy_material)
@@ -58,10 +58,13 @@ def create_material( model: WarCraft3Model, team_color: str ) -> List[Material]:
     return bpy_materials
 
 
-def create_bpy_material(bpy_images_of_layer: List[Image], material: WarCraft3Material):
-    material_name = bpy_images_of_layer[-1].filepath.split(os.path.sep)[-1].split('.')[0]
+def create_bpy_material( bpy_images_of_layer: List[Image], material: WarCraft3Material ) -> Material:
+    '''
+        블렌더 재질 생성
+        '''
+    material_name = bpy_images_of_layer[-1].filepath.split( os.path.sep )[-1].split('.')[0]
     # material_name = bpy_images_of_layer[-1].filepath.split('\\')[-1].split('.')[0]
-    bpy_material = bpy.data.materials.new(name=material_name)
+    bpy_material = bpy.data.materials.new( name=material_name )
     bpy_material.shadow_method = 'NONE'
     # bpy_material.use_object_color = True
     bpy_material.use_nodes = True
@@ -69,10 +72,10 @@ def create_bpy_material(bpy_images_of_layer: List[Image], material: WarCraft3Mat
     # bsdf_node.color = (1.0, 1.0, 1.0, 1.0)
     # bpy_material.node_tree.nodes.get("Material Output")
     bpy_material.diffuse_color = (1.0, 1.0, 1.0, 1.0)
-    texture_slot_index = 0
-    material_node_tree = bpy_material.node_tree
-    shader_node = material_node_tree.nodes.get("Principled BSDF")
-    color_input_socket = shader_node.inputs.get("Base Color")
+    texture_slot_index  = 0
+    material_node_tree  = bpy_material.node_tree
+    shader_node         = material_node_tree.nodes.get("Principled BSDF")
+    color_input_socket  = shader_node.inputs.get("Base Color")
     if material.hd:
         bpy_material.blend_method = 'HASHED'
         bpy_material.shadow_method = 'HASHED'
@@ -80,11 +83,11 @@ def create_bpy_material(bpy_images_of_layer: List[Image], material: WarCraft3Mat
         diffuse.location.x -= shader_node.width + 50
         diffuse.blend_type = 'COLOR'
 
-        for i, bpy_image in enumerate(bpy_images_of_layer):
-            texture_mat_node = material_node_tree.nodes.new('ShaderNodeTexImage')
+        for i, bpy_image in enumerate( bpy_images_of_layer ):
+            texture_mat_node            = material_node_tree.nodes.new('ShaderNodeTexImage')
             texture_mat_node.location.x -= shader_node.width + 350
             texture_mat_node.location.y += 200 - 200 * i
-            texture_mat_node.image = bpy_image
+            texture_mat_node.image      = bpy_image
             if i == 0:
                 material_node_tree.links.new(texture_mat_node.outputs.get("Color"), diffuse.inputs.get("Color1"))
                 material_node_tree.links.new(diffuse.outputs.get("Color"), color_input_socket)
@@ -126,21 +129,22 @@ def create_bpy_material(bpy_images_of_layer: List[Image], material: WarCraft3Mat
             # skip the environmental map, possibly change the world's map to it
             print(bpy_image.filepath, " at place ", i)
     else:
-        for i, bpy_image in enumerate(bpy_images_of_layer):
-            texture_mat_node = material_node_tree.nodes.new('ShaderNodeTexImage')
+        for i, bpy_image in enumerate( bpy_images_of_layer ):
+            texture_mat_node            = material_node_tree.nodes.new('ShaderNodeTexImage')
             texture_mat_node.location.x -= shader_node.width + 50
             texture_mat_node.location.y += 200 - 100 * i
-            texture_mat_node.image = bpy_image
-            material_node_tree.links.new(texture_mat_node.outputs.get("Color"), color_input_socket)
+            texture_mat_node.image      = bpy_image
+            material_node_tree.links.new( texture_mat_node.outputs.get( "Color"), color_input_socket )
             # bpy_material.texture_slots.add()
             # bpyTexture = bpy.data.textures.new(name=material_name, type='IMAGE')
             # bpy_material.texture_slots[texture_slot_index].texture = bpyTexture
             # texture_slot_index += 1
             # bpyTexture.image = bpy_image
+            
     return bpy_material
 
 
-def get_texture_ext(texture_exc: str):
+def get_texture_ext( texture_exc: str ):
     if texture_exc == '':
         print("No texture extension to replace blp with set in addon preferences")
         texture_exc = 'png'
@@ -222,7 +226,7 @@ def get_folders(alt_folder: str, resource_folder: str, model_file: str):
     return folders
 
 
-def check_file_path(folder: str, image_file: str):
+def check_file_path( folder: str, image_file: str ):
     # file_path = folder + os.path.sep + image_file
     file_path = folder + image_file
     # print("checking", file_path)

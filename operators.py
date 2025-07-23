@@ -14,7 +14,7 @@ from . import utils
 class WarCraft3OperatorImportMDX( bpy.types.Operator, bpy_extras.io_utils.ImportHelper ):
     '''
         WarCraft 3 Import MDX/MDL Operator
-    '''
+        '''
     
     bl_idname       = 'warcraft_3.import_mdl_mdx'
     bl_label        = 'Import *.mdl/*.mdx'
@@ -112,7 +112,8 @@ class WarCraft3OperatorImportMDX( bpy.types.Operator, bpy_extras.io_utils.Import
 
 class WarCraft3OperatorAddSequenceToArmature( bpy.types.Operator ):
     '''
-    '''
+        context.armature.warcraft_3.sequencesList.add()
+        '''
     
     bl_idname       = 'warcraft_3.add_sequence_to_armature'
     bl_label        = 'Warcraft 3 Add Sequence to Armature'
@@ -129,7 +130,8 @@ class WarCraft3OperatorAddSequenceToArmature( bpy.types.Operator ):
 
 class WarCraft3OperatorRemoveSequenceToArmature( bpy.types.Operator ):
     '''
-    '''
+        context.armature.warcraft_3.sequencesList.remove()
+        '''
     
     bl_idname       = 'warcraft_3.remove_sequence_to_armature'
     bl_label        = 'Warcraft 3 Remove Sequence to Armature'
@@ -145,7 +147,8 @@ class WarCraft3OperatorRemoveSequenceToArmature( bpy.types.Operator ):
 
 class WarCraft3OperatorUpdateBoneSettings( bpy.types.Operator ):
     '''
-    '''
+        bone_groups 업데이트
+        '''
     
     bl_idname       = 'warcraft_3.update_bone_settings'
     bl_label        = 'Warcraft 3 Update Bone Settings'

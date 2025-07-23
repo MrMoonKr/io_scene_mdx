@@ -21,7 +21,7 @@ from .parse_version import parse_version
 def parse_mdx( data: bytes, import_properties: MDXImportProperties ):
     """
         바이트버퍼 형태의 mdx 파일데이터 파싱
-    """
+        """
     data_size       = len( data )
     br              = binary_reader.Reader( data )
     data_id         = br.getid( constants.CHUNK_MDX_MODEL ) # 파일헤더 ID 'MDLX'
@@ -32,48 +32,48 @@ def parse_mdx( data: bytes, import_properties: MDXImportProperties ):
 
     while br.offset < data_size:
         chunk_id    = br.getid( constants.SUB_CHUNKS_MDX_MODEL, debug=True ) # 청크 ID
-        chunk_size  = br.getf('<I')[0]
-        chunk_data: bytes = data[ br.offset : br.offset + chunk_size ]
+        chunk_size  = br.getf('<I')[0] # 청크 크기
+        chunk_data  = data[ br.offset : br.offset + chunk_size ] # 청크 데이터
         br.skip( chunk_size )
 
-        if chunk_id == constants.CHUNK_VERSION:
+        if chunk_id == constants.CHUNK_VERSION: # 'VERS'
             model.version = parse_version( chunk_data )
         
-        elif chunk_id == constants.CHUNK_MODEL:
+        elif chunk_id == constants.CHUNK_MODEL: # 'MODL'
             model.name = parse_model( chunk_data )
         
-        elif chunk_id == constants.CHUNK_SEQUENCE:
+        elif chunk_id == constants.CHUNK_SEQUENCE: # 'SEQS'
             model.sequences.extend( parse_sequences( chunk_data ) )
         
-        elif chunk_id == constants.CHUNK_MATERIAL:
+        elif chunk_id == constants.CHUNK_MATERIAL: # 'MTLS'
             model.materials.extend( parse_materials( chunk_data, model.version ) )
         
-        elif chunk_id == constants.CHUNK_TEXTURE:
+        elif chunk_id == constants.CHUNK_TEXTURE: # 'TEXS'
             model.textures.extend( parse_textures( chunk_data ) )
         
-        elif chunk_id == constants.CHUNK_GEOSET:
+        elif chunk_id == constants.CHUNK_GEOSET: # 'GEOS'
             model.geosets.extend( parse_geosets( chunk_data, model.version ) )
         
-        # elif chunk_id == constants.CHUNK_GEOSET_ANIMATION:
-        #     model.geoset_animations.extend(parse_geoset_animations(chunk_data))
+        # elif chunk_id == constants.CHUNK_GEOSET_ANIMATION: # 'GEOA'
+        #     model.geoset_animations.extend( parse_geoset_animations( chunk_data ) )
             
-        elif chunk_id == constants.CHUNK_BONE:
+        elif chunk_id == constants.CHUNK_BONE: # 'BONE'
             model.nodes.extend( parse_bones( chunk_data ) )
             
-        elif chunk_id == constants.CHUNK_HELPER:
+        elif chunk_id == constants.CHUNK_HELPER: # 'HELP'
             model.nodes.extend( parse_helpers( chunk_data ) )
             
-        # elif chunk_id == constants.CHUNK_ATTACHMENT:
-        #     model.nodes.extend(parse_attachments(chunk_data))
+        # elif chunk_id == constants.CHUNK_ATTACHMENT: # 'ATCH'
+        #     model.nodes.extend( parse_attachments( chunk_data ) )
         
-        elif chunk_id == constants.CHUNK_PIVOT_POINT:
+        elif chunk_id == constants.CHUNK_PIVOT_POINT: # 'PIVT'
             model.pivot_points.extend( parse_pivot_points( chunk_data ) )
 
-        # elif chunk_id == constants.CHUNK_EVENT_OBJECT:
-        #     model.nodes.extend(parse_events(chunk_data))
+        # elif chunk_id == constants.CHUNK_EVENT_OBJECT: # 'EVTS'
+        #     model.nodes.extend( parse_events( chunk_data ) )
             
-        # elif chunk_id == constants.CHUNK_COLLISION_SHAPE:
-        #     model.nodes.extend(parse_collision_shapes(chunk_data))
+        # elif chunk_id == constants.CHUNK_COLLISION_SHAPE: # 'COLL'
+        #     model.nodes.extend( parse_collision_shapes( chunk_data ) )
             
             
 

@@ -1,25 +1,29 @@
 # Constants for MDX file format
 
 MDX_VERSIONS                    = [800, 900, 1000, 1100]
-MDX_CURRENT_VERSION             = 800
+MDX_CURRENT_VERSION             = 1100
 
 # MDX FILE CHUNKS
 CHUNK_MDX_MODEL                 = 'MDLX'
 
 # MDX MODEL SUB-CHUNKS
 CHUNK_VERSION                   = 'VERS'
-CHUNK_GEOSET                    = 'GEOS'
-CHUNK_TEXTURE                   = 'TEXS'
-CHUNK_MATERIAL                  = 'MTLS'
 CHUNK_MODEL                     = 'MODL'
+CHUNK_SEQUENCE                  = 'SEQS'
+CHUNK_MATERIAL                  = 'MTLS'
+CHUNK_TEXTURE                   = 'TEXS'
+CHUNK_GEOSET                    = 'GEOS'
+CHUNK_GEOSET_ANIMATION          = 'GEOA'
 CHUNK_BONE                      = 'BONE'
-CHUNK_PIVOT_POINT               = 'PIVT'
-CHUNK_HELPER                    = 'HELP'
 CHUNK_ATTACHMENT                = 'ATCH'
+CHUNK_PIVOT_POINT               = 'PIVT'
+CHUNK_CORN                      = 'CORN'
+CHUNK_CAMS                      = 'CAMS'
 CHUNK_EVENT_OBJECT              = 'EVTS'
 CHUNK_COLLISION_SHAPE           = 'CLID'
-CHUNK_SEQUENCE                  = 'SEQS'
-CHUNK_GEOSET_ANIMATION          = 'GEOA'
+CHUNK_CLID                      = 'FAFX'
+CHUNK_BPOS                      = 'BPOS'
+CHUNK_HELPER                    = 'HELP'
 
 # GEOSET SUB-CHUNKS
 CHUNK_VERTEX_POSITION           = 'VRTX'
