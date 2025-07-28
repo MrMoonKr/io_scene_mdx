@@ -4,8 +4,8 @@ from typing import Tuple
 
 class Reader:
     '''
-        A class to read binary data from a bytes.
-        It provides methods to read formatted data, strings, and chunk IDs,
+        A class to read binary data from a bytes.  
+        It provides methods to read formatted data, strings, and chunk IDs,  
         as well as to skip a specified number of bytes.
         '''
     

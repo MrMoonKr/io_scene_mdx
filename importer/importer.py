@@ -18,8 +18,8 @@ def load_warcraft_3_model( model: WarCraft3Model, import_properties: MDXImportPr
 
     bpy_materials: List[Material]   = create_material( model, import_properties.team_color )
     bpy_mesh_objects: List[Object]  = create_mesh_objects( model, bpy_materials )
-    armature_object: Object         = create_armature_object( model, bpy_mesh_objects, import_properties.bone_size )
-    create_armature_actions( armature_object, model, import_properties.frame_time )
+    #armature_object: Object         = create_armature_object( model, bpy_mesh_objects, import_properties.bone_size )
+    #create_armature_actions( armature_object, model, import_properties.frame_time )
     #create_object_actions( model, bpy_mesh_objects, import_properties.frame_time )
     
 def make_heirarchy_nodes( model: WarCraft3Model ):

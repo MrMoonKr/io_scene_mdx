@@ -6,12 +6,12 @@ from .get_vertex_groups import get_vertex_groups
 
 def parse_geometry( data: bytes, version: int ) -> WarCraft3Geoset:
     '''
-        지오메트리 데이터 파싱
+        메시 데이터 파싱
         '''
-    br          = Reader( data )
+    br              = Reader( data )
     
-    geoset      = WarCraft3Geoset()
-    geoset.name = 'temp'
+    geoset          = WarCraft3Geoset()
+    geoset.name     = 'temp'
 
     # parse vertices
     chunk_id        = br.getid( constants.CHUNK_VERTEX_POSITION )   # 'VRTX'
@@ -31,7 +31,7 @@ def parse_geometry( data: bytes, version: int ) -> WarCraft3Geoset:
         for _ in range( chunk_data_count ):
             chunk_data      = br.getf( chunk[1] )   # unpack format
 
-    # parse
+    # indices of mesh
     chunk_id        = br.getid( constants.CHUNK_FACE )              # 'PVTX'
     indices_count   = br.getf('<I')[0]
     if indices_count % 3 != 0:
@@ -60,7 +60,7 @@ def parse_geometry( data: bytes, version: int ) -> WarCraft3Geoset:
         matrix_groups_sizes.append( matrix_group_size )
 
     # parse MatrixIndices
-    chunk_id = br.getid( constants.CHUNK_MATRIX_INDEX )             # 'MATS'
+    chunk_id            = br.getid( constants.CHUNK_MATRIX_INDEX )  # 'MATS'
     matrix_indices_count = br.getf('<I')[0]
     matrix_indices      = []
 

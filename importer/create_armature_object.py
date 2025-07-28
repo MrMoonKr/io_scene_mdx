@@ -1,7 +1,7 @@
 from typing import List, Dict, Set
 
 import bpy
-from bpy.types import Object, Armature, ArmatureEditBones, BoneGroup
+from bpy.types import Object, Armature, ArmatureEditBones
 
 from ..classes.WarCraft3Model import WarCraft3Model
 from ..classes.WarCraft3Node import WarCraft3Node
@@ -99,12 +99,12 @@ def set_vertex_group_names( bpy_armature: bpy.types.Armature, bpy_mesh_objects: 
 
 
 def get_bone_group_dict( node_to_bone: dict[WarCraft3Node, bpy.types.EditBone],
-                         bpy_armature_object: Object ) -> dict[str, bpy.types.BoneGroups]:
+                         bpy_armature_object: Object ) :
     """
         BoneGruops 룩업테이블 구성.   
         BoneGroup은 같은 색깔로 표시되는 Bone Collection임.
     """
-    bone_groups: dict[str, BoneGroup] = {}
+    bone_groups = {}
     # node_types = collect_node_types(bone_types)
     node_types: list[str] = []
     
@@ -122,7 +122,7 @@ def get_bone_group_dict( node_to_bone: dict[WarCraft3Node, bpy.types.EditBone],
 
 
 def get_bone_group_dict(bone_types: Dict[str, str], bpy_armature_object: Object):
-    bone_groups: Dict[str, BoneGroup] = {}
+    bone_groups = {}
     # node_types = collect_node_types(bone_types)
 
     node_types: List[str] = []
@@ -238,7 +238,7 @@ def collect_node_types( bone_types: Dict[str, str] ) -> List[str]:
     return node_types
 
 
-def get_new_bone_group( nodeType: str, bone_groups: bpy.types.BoneGroups ) -> BoneGroup:
+def get_new_bone_group( nodeType: str, bone_groups ):
     """
         특정 종류의 BoneGroup 조회. 없으면 생성
         """
@@ -251,7 +251,7 @@ def get_new_bone_group( nodeType: str, bone_groups: bpy.types.BoneGroups ) -> Bo
     return bone_group
 
 
-def get_new_bone_group11(nodeType: str, bone_groups: bpy.types.BoneGroups) -> BoneGroup:
+def get_new_bone_group11(nodeType: str, bone_groups):
     bone_groups.get(nodeType + 's')
     bone_group: bpy.types.BoneGroup = bone_groups.new(nodeType + 's')
     # bone_group: bpy.types.BoneGroup = bpy.types.BoneGroups.new(nodeType + 's')

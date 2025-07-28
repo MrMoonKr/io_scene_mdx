@@ -65,7 +65,7 @@ def create_bpy_material( bpy_images_of_layer: List[Image], material: WarCraft3Ma
     material_name = bpy_images_of_layer[-1].filepath.split( os.path.sep )[-1].split('.')[0]
     # material_name = bpy_images_of_layer[-1].filepath.split('\\')[-1].split('.')[0]
     bpy_material = bpy.data.materials.new( name=material_name )
-    bpy_material.shadow_method = 'NONE'
+    # bpy_material.shadow_method = 'NONE'
     # bpy_material.use_object_color = True
     bpy_material.use_nodes = True
     # bsdf_node = bpy_material.node_tree.nodes.new('ShaderNodeBsdfDiffuse')

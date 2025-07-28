@@ -15,7 +15,9 @@ class WarCraft3ArmatureProperties( bpy.types.PropertyGroup ):
         '''
     bpy_type = bpy.types.Armature
     sequencesList: bpy.props.CollectionProperty( type=WarCraft3ArmatureSequenceList ) # type: ignore
-    sequencesListIndex: bpy.props.IntProperty( update=utils.set_animation ) # type: ignore
+    sequencesListIndex: bpy.props.IntProperty( 
+        #update=utils.set_animation
+        ) # type: ignore
 
 
 class WarCraft3BoneProperties( bpy.types.PropertyGroup ):
@@ -34,6 +36,6 @@ class WarCraft3BoneProperties( bpy.types.PropertyGroup ):
             ('COLLISION_SHAPE', 'Collision Shape', '')
         ],
         name='Node Type',
-        update=utils.set_bone_node_type,
+        #update=utils.set_bone_node_type,
         default='NONE'
     )

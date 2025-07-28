@@ -47,23 +47,23 @@ if "bpy" in locals():
 
 import bpy
 
-from operators import (
+from .operators import (
     WarCraft3OperatorImportMDX,
     WarCraft3OperatorAddSequenceToArmature,
     WarCraft3OperatorRemoveSequenceToArmature,
     WarCraft3OperatorUpdateBoneSettings
 )
 
-from ui import (
+from .ui import (
     WarCraft3PanelBone,
     WarCraft3PanelArmature
 )
 
-from preferences import (
+from .preferences import (
     WarCraft3Preferences
 )
 
-from props import (
+from .props import (
     WarCraft3ArmatureSequenceList,
     WarCraft3ArmatureProperties,
     WarCraft3BoneProperties

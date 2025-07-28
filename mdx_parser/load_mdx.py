@@ -6,7 +6,7 @@ from ..classes.MDXImportProperties import MDXImportProperties
 
 def load_mdx( import_properties: MDXImportProperties ):
     """
-        파일열어서 파일데이터 읽어들여 파서에 전달
+        .mdx 파일의 파일데이터를 bytes로 읽어들여 파서에 전달
         """
     mdx_file: BufferedReader = open( import_properties.mdx_file_path, 'rb' )
     mdx_file_data: bytes = mdx_file.read()

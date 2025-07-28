@@ -31,6 +31,7 @@ class WarCraft3OperatorImportMDX( bpy.types.Operator, bpy_extras.io_utils.Import
         maxlen=1024,
         default='' 
         ) # type: ignore
+    
     useCustomFPS: bpy.props.BoolProperty(
         name='Use Custom FPS',
         default=False 
@@ -90,12 +91,12 @@ class WarCraft3OperatorImportMDX( bpy.types.Operator, bpy_extras.io_utils.Import
             layout.prop( self, 'animationFPS' )
 
     def execute( self, context ):
-        import_properties = MDXImportProperties()
+        import_properties               = MDXImportProperties()
         import_properties.mdx_file_path = self.filepath
-        import_properties.team_color = self.setTeamColor
-        import_properties.bone_size = self.boneSize
+        import_properties.team_color    = self.setTeamColor
+        import_properties.bone_size     = self.boneSize
         import_properties.use_custom_fps = self.useCustomFPS
-        import_properties.fps = self.animationFPS
+        import_properties.fps           = self.animationFPS
         import_properties.calculate_frame_time()
         #constants.os_path_separator = os.path
         if ".mdl" in self.filepath:

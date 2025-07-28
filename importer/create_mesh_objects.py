@@ -15,9 +15,12 @@ def create_mesh_objects( model: WarCraft3Model, bpy_materials: List[Material] ) 
     bpy_mesh_objects: List[Object] = []
 
     for warCraft3Geoset in model.geosets:
+        # 메시 오브젝트 생성
         bpy_mesh    = bpy.data.meshes.new( warCraft3Geoset.name )
         bpy_object  = bpy.data.objects.new( warCraft3Geoset.name, bpy_mesh )
         bpy.context.scene.collection.objects.link( bpy_object )
+        
+        # 메시 데이터 로딩
         bpy_mesh.from_pydata( warCraft3Geoset.vertices, (), warCraft3Geoset.triangles )
         bpy_mesh.uv_layers.new()
         uv_layer    = bpy_mesh.uv_layers.active.data

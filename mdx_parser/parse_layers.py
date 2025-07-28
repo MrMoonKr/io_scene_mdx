@@ -12,7 +12,8 @@ def parse_layers( data: bytes, version: int ) -> list[WarCraft3Layer]:
     """
         'LAYS' chunk and chunk data. 재질의 레이어 데이터 파싱
         """
-    br = binary_reader.Reader( data )
+    br              = binary_reader.Reader( data )
+    data_size       = len( data )
     
     chunk_id        = br.getid( constants.CHUNK_LAYER ) # 'LAYS'
     layers_count    = br.getf('<I')[0]
