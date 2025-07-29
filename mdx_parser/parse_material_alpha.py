@@ -5,8 +5,10 @@ from .. import constants
 
 def parse_material_alpha( br: Reader ):
     '''
-        재질의 알파값 애니메이션 데이터 파싱. key type : '<f'
+        재질의 알파값 애니메이션 데이터 파싱.  
+        key format : '<f'
         '''
+        
     alpha                   = WarCraft3Transformation()
     
     alpha.tracks_count      = br.getf('<I')[0]
@@ -16,14 +18,12 @@ def parse_material_alpha( br: Reader ):
     for _ in range( alpha.tracks_count ):
         time                = br.getf('<I')[0] 
         value               = br.getf('<f')[0] # alpha value
-        
-        alpha.times.append( time )
-        alpha.values.append( value )
-
         if alpha.interpolation_type > constants.INTERPOLATION_TYPE_LINEAR:
             in_tan          = br.getf('<f')[0]
             out_tan         = br.getf('<f')[0]
 
-    return alpha
+        alpha.times.append( time )
+        alpha.values.append( value )
 
+    return alpha
 

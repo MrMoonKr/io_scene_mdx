@@ -20,8 +20,8 @@ class WarCraft3Preferences( bpy.types.AddonPreferences ):
     )
     textureExtension: bpy.props.StringProperty( # type: ignore
         name='Image Extension',
-        default='png'
-    )
+        default='dds'
+    ) 
 
     def draw( self, context ):
         layout = self.layout

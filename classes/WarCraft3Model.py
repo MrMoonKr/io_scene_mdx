@@ -9,19 +9,22 @@ from .WarCraft3Texture import WarCraft3Texture
 
 
 class WarCraft3Model:
-    def __init__(self):
+    def __init__( self ):
         self.file = ''
         self.version = 800
         self.name = ''
-        self.geosets: List[WarCraft3Geoset] = []
-        self.materials: List[WarCraft3Material] = []
-        self.textures: List[WarCraft3Texture] = []
+        self.geosets: list[WarCraft3Geoset] = []
+        self.materials: list[WarCraft3Material] = []
+        self.textures: list[WarCraft3Texture] = []
         # self.nodes: List[]  = []
-        self.nodes: List[WarCraft3Node] = []
-        self.sequences: List[WarCraft3Sequence] = []
-        self.geoset_animations: List[WarCraft3GeosetAnimation] = []
-        self.pivot_points: List[List[float]] = []
+        self.nodes: list[WarCraft3Node] = []
+        self.sequences: list[WarCraft3Sequence] = []
+        self.geoset_animations: list[WarCraft3GeosetAnimation] = []
+        self.pivot_points: list[list[float]] = []
 
-    def normalize_meshes_names(self):
+    def normalize_meshes_names( self ):
         for mesh in self.geosets:
             mesh.name = self.name
+    def normalize_materials_names( self ):
+        for i, mat in enumerate( self.materials ):
+            mat.name = self.name + '_' + str( i )

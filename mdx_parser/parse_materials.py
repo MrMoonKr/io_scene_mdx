@@ -7,10 +7,12 @@ from .parse_layers import parse_layers
 
 def parse_materials( data: bytes, version: int ) -> list[WarCraft3Material]:
     """
-        'MTLS' chunk data. 재질 데이터 파싱
+        'MTLS' chunk data.  
+        재질 데이터 파싱  
         """
-    br          = binary_reader.Reader( data )
-    data_size   = len( data )
+        
+    br                  = binary_reader.Reader( data )
+    data_size           = len( data )
 
     materials: list[WarCraft3Material] = []
 
@@ -24,7 +26,7 @@ def parse_materials( data: bytes, version: int ) -> list[WarCraft3Material]:
         layer_chunk_data_size = inclusive_size - 12
 
         if layer_chunk_data_size > 0:
-            layer_chunk_data: bytes = data[ br.offset : br.offset + layer_chunk_data_size ]
+            layer_chunk_data = data[ br.offset : br.offset+layer_chunk_data_size ]
             br.skip( layer_chunk_data_size )
             
             material.layers = parse_layers( layer_chunk_data, version )
