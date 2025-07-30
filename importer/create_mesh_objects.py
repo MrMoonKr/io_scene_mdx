@@ -6,13 +6,14 @@ from bpy.types import Object, Mesh, Material
 from ..classes.WarCraft3Model import WarCraft3Model
 
 
-def create_mesh_objects( model: WarCraft3Model, bpy_materials: List[Material] ) -> List[Object]:
+def create_mesh_objects( model: WarCraft3Model, bpy_materials: list[Material] ) -> list[Object]:
     """
-        create blender mesh
+        create blender mesh.  
         """
-    print("creating mesh")
+        
+    print( "[io_scene_mdx] creating mesh" )
     
-    bpy_mesh_objects: List[Object] = []
+    bpy_mesh_objects: list[Object] = []
 
     for warCraft3Geoset in model.geosets:
         # 메시 오브젝트 생성
@@ -21,7 +22,7 @@ def create_mesh_objects( model: WarCraft3Model, bpy_materials: List[Material] ) 
         bpy.context.scene.collection.objects.link( bpy_object )
         
         # 메시 데이터 로딩
-        bpy_mesh.from_pydata( warCraft3Geoset.vertices, (), warCraft3Geoset.triangles )
+        bpy_mesh.from_pydata( warCraft3Geoset.vertices, [], warCraft3Geoset.triangles )
         bpy_mesh.uv_layers.new()
         uv_layer    = bpy_mesh.uv_layers.active.data
 
@@ -33,6 +34,7 @@ def create_mesh_objects( model: WarCraft3Model, bpy_materials: List[Material] ) 
         #bpy_material = bpy_materials[warCraft3Geoset.material_id]
         #bpy_mesh.materials.append(bpy_material)
 
+        # 
         for vertexGroupId in warCraft3Geoset.vertex_groups_ids:
             bpy_object.vertex_groups.new( name=str( vertexGroupId ) )
 
@@ -53,7 +55,7 @@ def create_mesh_objects( model: WarCraft3Model, bpy_materials: List[Material] ) 
                 
             for i in range( 0, 4 ):
                 if skin_weight[i] != 255 and skin_weight[ i + 4 ] != 0:
-                    bpy_object.vertex_groups.get( str(skin_weight[i])).add([vertex_index, ], skin_weight[i + 4] / 255.0, 'REPLACE' )
+                    bpy_object.vertex_groups.get( str( skin_weight[i] ) ).add([vertex_index, ], skin_weight[i + 4] / 255.0, 'REPLACE' )
 
             # if skin_weight[4] != 0:
             #     bpy_object.vertex_groups.get(str(skin_weight[0])).add([vertex_index, ], skin_weight[4]/255.0, 'REPLACE')

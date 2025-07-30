@@ -7,17 +7,18 @@ from ..classes.WarCraft3Geoset import WarCraft3Geoset
 
 def parse_geosets( data: bytes, version: int ) -> list[WarCraft3Geoset]:
     """
-        'GEOS' chunk data. 메시 데이터들을 파싱
+        'GEOS' chunk data. 메시 데이터들을 파싱.  
         """
-    data_size = len( data )
-    br = binary_reader.Reader( data )
+        
+    br                  = binary_reader.Reader( data )
+    data_size           = len( data )
 
     geosets: list[WarCraft3Geoset] = []
     
     while br.offset < data_size:
         inclusive_size  = br.getf('<I')[0]
         geo_data_size   = inclusive_size - 4
-        geo_data        = data[ br.offset : ( br.offset + geo_data_size ) ]
+        geo_data        = data[ br.offset : ( br.offset+geo_data_size ) ]
         br.skip( geo_data_size )
         
         mesh            = parse_geometry( geo_data, version )

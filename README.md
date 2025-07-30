@@ -3,6 +3,7 @@
 ( Not Working )  
 ( Don't Use )
 
+- 파일포맷 : https://wowdev.wiki/MDX
 - ...
 
 ## 개발 및 테스트 환경

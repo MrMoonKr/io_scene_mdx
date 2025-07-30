@@ -6,7 +6,7 @@ def get_vertex_groups( matrix_groups, matrix_groups_sizes, matrix_indices ):
     matrix = []
 
     for matrixGroupSize in matrix_groups_sizes:
-        matrix.append( matrix_indices[i: i + matrixGroupSize] )
+        matrix.append( matrix_indices[ i : i+matrixGroupSize ] )
         i += matrixGroupSize
 
     vertex_groups       = []
@@ -14,7 +14,7 @@ def get_vertex_groups( matrix_groups, matrix_groups_sizes, matrix_indices ):
 
     for matrixGroup in matrix_groups:
         if matrixGroup < len( matrix ):
-            vertex_group = matrix[matrixGroup]
+            vertex_group = matrix[ matrixGroup ]
             vertex_groups.append( vertex_group )
 
             for vertexGroupId in vertex_group:

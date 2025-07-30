@@ -8,15 +8,16 @@ from ..classes.WarCraft3Node import WarCraft3Node
 
 def parse_bones( data: bytes ) -> list[WarCraft3Node]:
     """
-        'BONE' chunk data
+        'BONE' chunk data.  
         """
-    br = binary_reader.Reader( data )
-    data_size = len( data )
+        
+    br              = binary_reader.Reader( data )
+    data_size       = len( data )
 
     nodes: list[WarCraft3Node] = []
     
     while br.offset < data_size:
-        bone = WarCraft3Bone()
+        bone        = WarCraft3Bone()
         
         parse_node( br, bone )
         
