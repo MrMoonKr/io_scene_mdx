@@ -50,8 +50,8 @@ def create_armature_object( model: WarCraft3Model, bpy_mesh_objects: list[Object
     for p_bone in bpy_armature_object.pose.bones:
         p_bone.rotation_mode = 'XYZ'
         #p_bone.bone_group = bone_groups[ bone_types[ p_bone.name ] ]
-        #bone_group = bone_groups[ bone_types[ p_bone.name ] ]
-        #bone_group.bones.add( p_bone.bone )
+        bone_group = bone_groups[ bone_types[ p_bone.name ] ]
+        bone_group.assign( p_bone )
 
     bpy.ops.object.mode_set( mode='OBJECT' )
     bpy.context.active_object.select_set( False )
@@ -106,34 +106,11 @@ def set_vertex_group_names( bpy_armature: bpy.types.Armature,
             vertexGroup.name    = bone_name
 
 
-def get_bone_group_dict( node_to_bone: dict[WarCraft3Node, bpy.types.EditBone],
-                         bpy_armature_object: Object ) :
-    """
-        BoneGruops 룩업테이블 구성.   
-        BoneGroup은 같은 색깔로 표시되는 Bone Collection임.
-        """
-    bone_groups = {}
-    # node_types = collect_node_types(bone_types)
-    node_types: list[str] = []
-    
-    # 노드타입들 추출
-    for index, node in enumerate( node_to_bone ):
-        if node.node_type not in node_types:
-            node_types.append( node.node_type )
-    node_types.sort()
-
-    for nodeType in node_types:
-        bone_group = get_new_bone_group( nodeType, bpy_armature_object.pose.bone_groups )
-        bone_groups[nodeType] = bone_group
-        
-    return bone_groups
-
-
 def get_bone_group_dict( bone_types: dict[str, str], bpy_armature_object: Object ) -> dict[str,bpy.types.BoneCollection]:
     '''
         (본이름, 본타입) -> Armature 본 이름 수정.  
         '''
-    bone_groups = {}
+    bone_groups: dict[str, bpy.types.BoneCollection] = {}
     # node_types = collect_node_types(bone_types)
 
     node_types: list[str] = [] # 노드 타입들 목록
