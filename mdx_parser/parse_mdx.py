@@ -18,7 +18,7 @@ from .parse_textures import parse_textures
 from .parse_version import parse_version
 
 
-def parse_mdx( data: bytes, import_properties: MDXImportProperties ):
+def parse_mdx( data: bytes, import_properties: MDXImportProperties ) -> WarCraft3Model:
     """
         바이트버퍼 형태의 mdx 파일데이터 파싱
         """
@@ -64,8 +64,8 @@ def parse_mdx( data: bytes, import_properties: MDXImportProperties ):
         elif chunk_id == constants.CHUNK_HELPER: # 'HELP'
             model.nodes.extend( parse_helpers( chunk_data ) )
             
-        # elif chunk_id == constants.CHUNK_ATTACHMENT: # 'ATCH'
-        #     model.nodes.extend( parse_attachments( chunk_data ) )
+        elif chunk_id == constants.CHUNK_ATTACHMENT: # 'ATCH'
+            model.nodes.extend( parse_attachments( chunk_data ) )
         
         elif chunk_id == constants.CHUNK_PIVOT_POINT: # 'PIVT'
             model.pivot_points.extend( parse_pivot_points( chunk_data ) )
@@ -78,4 +78,5 @@ def parse_mdx( data: bytes, import_properties: MDXImportProperties ):
             
             
 
-    importer.load_warcraft_3_model( model, import_properties )
+    # importer.load_warcraft_3_model( model, import_properties )
+    return model

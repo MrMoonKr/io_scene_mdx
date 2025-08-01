@@ -157,7 +157,7 @@ class WarCraft3OperatorUpdateBoneSettings( bpy.types.Operator ):
     bl_options      = {'UNDO'}
 
     def execute( self, context ):
-        object = context.object
+        object          = context.object
         for bone in object.data.bones:
             nodeType    = bone.warcraft_3.nodeType
             boneGroup   = object.pose.bone_groups.get( nodeType.lower() + 's', None )

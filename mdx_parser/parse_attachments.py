@@ -7,16 +7,22 @@ from ..classes.WarCraft3Node import WarCraft3Node
 
 
 def parse_attachments( data: bytes ):
-    data_size = len( data )
-    br = binary_reader.Reader( data )
+    '''
+        'ATCH' Chunks.  
+        Attachment Node.  
+        '''
+        
+    br              = binary_reader.Reader( data )
+    data_size       = len( data )
 
     nodes: List[WarCraft3Node] = []
     
     while br.offset < data_size:
         inclusive_size      = br.getf('<I')[0]
         attach_data_size    = inclusive_size - 4
-        attach_data         = data[ br.offset : br.offset + attach_data_size ]
+        attach_data         = data[ br.offset : br.offset+attach_data_size ]
         br.skip( attach_data_size )
+        
         attachment          = parse_attachment( attach_data )
         
         nodes.append( attachment )

@@ -1,7 +1,7 @@
 # Constants for MDX file format
 
-MDX_VERSIONS                    = [800, 900, 1000, 1100]
-MDX_CURRENT_VERSION             = 1100
+MDX_VERSIONS                    = [800, 900, 1000, 1100, 1200]
+MDX_CURRENT_VERSION             = 1200
 
 # MDX FILE CHUNKS
 CHUNK_MDX_MODEL                 = 'MDLX'

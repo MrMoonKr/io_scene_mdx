@@ -5,13 +5,18 @@ from .parse_node import parse_node
 
 
 def parse_attachment( data: bytes ):
-    br = binary_reader.Reader( data )
-    data_size = len( data )
+    '''
+        Attachment Chunk.  
+        '''
+        
+    br              = binary_reader.Reader( data )
+    data_size       = len( data )
     
-    attachment = WarCraft3Attachment()
+    attachment      = WarCraft3Attachment()
     
     parse_node( br, attachment )
-    path            = br.gets(260)
+    
+    path            = br.gets( 260 )
     attachment_id   = br.getf('<I')[0]
 
     if br.offset < data_size:
