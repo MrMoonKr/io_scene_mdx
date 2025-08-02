@@ -6,7 +6,7 @@ from .get_vertex_groups import get_vertex_groups
 
 def parse_geometry( data: bytes, version: int ) -> WarCraft3Geoset:
     '''
-        메시 데이터 파싱
+        메시 데이터 파싱.  
         '''
         
     br                      = binary_reader.Reader( data )
@@ -119,9 +119,8 @@ def parse_geometry( data: bytes, version: int ) -> WarCraft3Geoset:
 
     # parse uv-coordinates
     chunk_id                = br.getid( constants.CHUNK_VERTEX_TEXTURE_POSITION )  # 'UVBS'
-    vertex_texture_position_count = br.getf('<I')[0]
-
-    for _ in range( vertex_texture_position_count ):
+    vertex_uv_count         = br.getf('<I')[0]
+    for _ in range( vertex_uv_count ):
         u, v                = br.getf('<2f')
         geoset.uvs.append( ( u, 1 - v ) )
 

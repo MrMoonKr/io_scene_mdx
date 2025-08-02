@@ -8,6 +8,7 @@ def parse_node( br: Reader, node: WarCraft3Node ) -> WarCraft3Node:
     """
         node data + node animation ( .translations .rotations .scalings )
         """
+        
     # Node Data
     inclusive_size  = br.offset + br.getf('<I')[0]  # end-offset
     node.name       = br.gets(80)
