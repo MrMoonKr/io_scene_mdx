@@ -1,5 +1,6 @@
 
 import bpy
+from bpy.types import BoneCollection
 
 from .props import WarCraft3ArmatureProperties, WarCraft3ArmatureSequenceList
 from . import constants
@@ -68,11 +69,30 @@ def set_bone_node_type( self: bpy.types.bpy_struct, context: bpy.types.Context )
         This function checks the active bone's node type and assigns it to a bone group
         based on the node type. If the bone group does not exist, it creates a new
         '''
-    bone = context.active_bone
+    bone            = context.active_bone
     if bone:
         node_type   = bone.warcraft_3.nodeType
         bpy_object  = context.object
         #bone_groups: bpy.types.BoneGroups = bpy_object.pose.bone_groups
+        bone_collection: BoneCollection = bpy_object.data.collections.get( node_type.lower() + 's', None )
+        if not bone_collection:
+            if node_type in {'BONE', 'ATTACHMENT', 'COLLISION_SHAPE', 'EVENT', 'HELPER'}:
+                #bcollections = bpy_object.data.collections.new( node_type.lower() + 's' )
+                if node_type == 'BONE':
+                    bone_collection.color_set = 'THEME04'
+                elif node_type == 'ATTACHMENT':
+                    bone_collection.color_set = 'THEME09'
+                elif node_type == 'COLLISION_SHAPE':
+                    bone_collection.color_set = 'THEME02'
+                elif node_type == 'EVENT':
+                    bone_collection.color_set = 'THEME03'
+                elif node_type == 'HELPER':
+                    bone_collection.color_set = 'THEME01'
+            else:
+                bone_group = None
+        bpy_object.pose.bones[bone.name].bone_group = bone_group
+        
+        
         bone_group: bpy.types.BoneGroup  = bpy_object.pose.bone_groups.get( node_type.lower() + 's', None )
         if not bone_group:
             if node_type in {'BONE', 'ATTACHMENT', 'COLLISION_SHAPE', 'EVENT', 'HELPER'}:

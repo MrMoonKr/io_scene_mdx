@@ -1,7 +1,8 @@
 import bpy
+from bpy.types import Panel
 
 
-class WarCraft3PanelArmature( bpy.types.Panel ):
+class WarCraft3PanelArmature( Panel ):
     '''
         WarCraft 3 Armature Panel
         This panel is used to manage WarCraft 3 sequences in the armature properties.
@@ -32,7 +33,7 @@ class WarCraft3PanelArmature( bpy.types.Panel ):
         
         layout.label( text='Animations:' )
         
-        row = layout.row()
+        row             = layout.row()
         row.template_list(
             listtype_name='UI_UL_list',
             list_id='name',
@@ -42,15 +43,15 @@ class WarCraft3PanelArmature( bpy.types.Panel ):
             active_propname='sequencesListIndex',
             rows=2
             )
-        col = row.column( align=True )
+        col             = row.column( align=True )
         col.operator( 'warcraft_3.add_sequence_to_armature', icon='ADD', text='' )
         col.operator( 'warcraft_3.remove_sequence_to_armature', icon='REMOVE', text='' )
 
 
-class WarCraft3PanelBone( bpy.types.Panel ):
+class WarCraft3PanelBone( Panel ):
     '''
-
-    '''
+        Bone 커스텀 정보
+        '''
     bl_idname           = 'WC3_PT_bone_panel'
     bl_label            = 'WarCraft 3'
     bl_space_type       = 'PROPERTIES'
@@ -68,7 +69,4 @@ class WarCraft3PanelBone( bpy.types.Panel ):
         
         layout.prop( warcraft3data, 'nodeType' )
         if context.object.mode == 'POSE':
-            layout.operator(
-                'warcraft_3.update_bone_settings',
-                text='Update All Nodes'
-            )
+            layout.operator( 'warcraft_3.update_bone_settings', text='Update All Nodes' )

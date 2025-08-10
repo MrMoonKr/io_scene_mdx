@@ -15,7 +15,7 @@ bl_info = {
 def get_version_string():
     """
         애드온 버전 문자열 조회
-    """
+        """
     return str( bl_info['version'][0] ) + '.' + str( bl_info['version'][1] ) + '.' + str( bl_info['version'][2] )
 
 #
@@ -25,7 +25,7 @@ def get_version_string():
 def reload_package( module_dict_main: dict[str,] = locals() ):
     """
         애드온 리로딩 : F3 -> Reload Scripts ()
-    """
+        """
     import importlib
     from pathlib import Path
 
@@ -46,6 +46,7 @@ if "bpy" in locals():
     reload_package( locals() )
 
 import bpy
+from bpy.types import Context
 
 from .operators import (
     WarCraft3OperatorImportMDX,
@@ -70,7 +71,7 @@ from .props import (
 )
 
 
-def menu_import_mdx( self, context: bpy.types.Context ):
+def menu_import_mdx( self, context: Context ):
     self.layout.operator( WarCraft3OperatorImportMDX.bl_idname, text='Warcraft 3 (.mdl/.mdx)' )
 
 
@@ -92,7 +93,7 @@ prop_classes = (
 
 
 def register():
-    print( "io_scene_mdx register() called" )
+    print( "[io_scene_mdx] register() called" )
     
     for cls in prop_classes:
         bpy.utils.register_class( cls )

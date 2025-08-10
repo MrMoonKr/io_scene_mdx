@@ -3,7 +3,7 @@ import bpy
 
 class MDXImportProperties:
     '''
-        임포트 옵션
+        임포트 옵션들
         '''
     def __init__( self ):
         self.mdx_file_path: str     = ''

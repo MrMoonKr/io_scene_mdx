@@ -2,7 +2,7 @@ from . import binary_reader
 from ..classes.WarCraft3Model import WarCraft3Model
 
 
-def parse_pivot_points( data: bytes ) -> list[ tuple[float] ]:
+def parse_pivot_points( data: bytes ) -> list[ tuple[float,float,float] ]:
     """
         'PIVT' chunk data  
         """
@@ -15,7 +15,7 @@ def parse_pivot_points( data: bytes ) -> list[ tuple[float] ]:
 
     pivot_points_count  = data_size // 12
 
-    pivot_points: list[ tuple[float] ] = []
+    pivot_points: list[tuple[float,float,float]] = []
     
     for _ in range( pivot_points_count ):
         point           = br.getf('<3f')

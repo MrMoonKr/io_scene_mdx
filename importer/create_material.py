@@ -19,11 +19,12 @@ def create_material( model: WarCraft3Model, team_color: str ) -> list[Material]:
         """
     print( "[io_scene_mdx] creating materials" )
     # preferences = bpy.context.preferences.addons.get('io_scene_warcraft_3') #['io_scene_warcraft_3'].preferences
+    # addon: bpy.types.Addon = bpy.context.preferences.addons.get(__package__) // 'io_scene_mdx.importer'
     addon: bpy.types.Addon = bpy.context.preferences.addons.get('io_scene_mdx')
     if addon:
         preferences: WarCraft3Preferences = addon.preferences
         
-    preferences: WarCraft3Preferences = bpy.context.preferences.addons.get('io_scene_mdx').preferences
+    # preferences: WarCraft3Preferences = bpy.context.preferences.addons.get('io_scene_mdx').preferences
 
     folders                 = get_folders( preferences.alternativeResourceFolder, preferences.resourceFolder, model.file )
 
@@ -69,34 +70,34 @@ def create_bpy_material( bpy_images_of_layer: list[Image], material: WarCraft3Ma
     # bpy_material.node_tree.nodes.get("Material Output")
     bpy_material.diffuse_color = ( 1.0, 1.0, 1.0, 1.0 )
     texture_slot_index      = 0
-    material_node_tree      = bpy_material.node_tree
-    shader_node             = material_node_tree.nodes.get( "Principled BSDF" )
+    shader_node_tree        = bpy_material.node_tree
+    shader_node             = shader_node_tree.nodes.get( "Principled BSDF" )
     color_input_socket      = shader_node.inputs.get( "Base Color" )
     if material.hd:
         bpy_material.blend_method = 'HASHED'
         bpy_material.shadow_method = 'HASHED'
-        diffuse = material_node_tree.nodes.new('ShaderNodeMixRGB')
+        diffuse = shader_node_tree.nodes.new('ShaderNodeMixRGB')
         diffuse.location.x -= shader_node.width + 50
         diffuse.blend_type = 'COLOR'
 
         for i, bpy_image in enumerate( bpy_images_of_layer ):
-            texture_mat_node            = material_node_tree.nodes.new('ShaderNodeTexImage')
+            texture_mat_node            = shader_node_tree.nodes.new('ShaderNodeTexImage')
             texture_mat_node.location.x -= shader_node.width + 350
             texture_mat_node.location.y += 200 - 200 * i
             texture_mat_node.image      = bpy_image
             if i == 0:
-                material_node_tree.links.new(texture_mat_node.outputs.get("Color"), diffuse.inputs.get("Color1"))
-                material_node_tree.links.new(diffuse.outputs.get("Color"), color_input_socket)
-                material_node_tree.links.new(texture_mat_node.outputs.get("Alpha"), shader_node.inputs.get("Alpha"))
+                shader_node_tree.links.new(texture_mat_node.outputs.get("Color"), diffuse.inputs.get("Color1"))
+                shader_node_tree.links.new(diffuse.outputs.get("Color"), color_input_socket)
+                shader_node_tree.links.new(texture_mat_node.outputs.get("Alpha"), shader_node.inputs.get("Alpha"))
             elif i == 1:
-                normal_map = material_node_tree.nodes.new('ShaderNodeNormalMap')
+                normal_map = shader_node_tree.nodes.new('ShaderNodeNormalMap')
                 normal_map.location.x -= shader_node.width + 50
                 normal_map.location.y += 200 - 200 * i
-                material_node_tree.links.new(texture_mat_node.outputs.get("Color"), normal_map.inputs.get("Color"))
-                material_node_tree.links.new(normal_map.outputs.get("Normal"), shader_node.inputs.get("Normal"))
+                shader_node_tree.links.new(texture_mat_node.outputs.get("Color"), normal_map.inputs.get("Color"))
+                shader_node_tree.links.new(normal_map.outputs.get("Normal"), shader_node.inputs.get("Normal"))
             elif i == 2:
-                orm = material_node_tree.nodes.new('ShaderNodeSeparateRGB')
-                roughthness_inv = material_node_tree.nodes.new("ShaderNodeMath")
+                orm = shader_node_tree.nodes.new('ShaderNodeSeparateRGB')
+                roughthness_inv = shader_node_tree.nodes.new("ShaderNodeMath")
                 roughthness_inv.operation = 'SUBTRACT'
                 roughthness_inv.location.x -= shader_node.width
                 roughthness_inv.location.y += 200 - 200 * i
@@ -105,33 +106,33 @@ def create_bpy_material( bpy_images_of_layer: list[Image], material: WarCraft3Ma
 
                 orm.location.x -= shader_node.width + 50
                 orm.location.y += 200 - 200 * i
-                material_node_tree.links.new(texture_mat_node.outputs.get("Color"), orm.inputs.get("Image"))
+                shader_node_tree.links.new(texture_mat_node.outputs.get("Color"), orm.inputs.get("Image"))
                 # I don't currently know how to do occlusion
                 # material_node_tree.links.new(orm.outputs.get("G"), roughthness_inv.inputs.get("Value2"))
-                material_node_tree.links.new(orm.outputs.get("G"), roughthness_inv.inputs[1])
+                shader_node_tree.links.new(orm.outputs.get("G"), roughthness_inv.inputs[1])
                 # material_node_tree.links.new(roughthness_inv.outputs.get("Value"), shader_node.inputs.get("Roughness"))
-                material_node_tree.links.new(roughthness_inv.outputs[0], shader_node.inputs.get("Roughness"))
-                material_node_tree.links.new(orm.outputs.get("B"), shader_node.inputs.get("Metallic"))
-                material_node_tree.links.new(texture_mat_node.outputs.get("Alpha"), diffuse.inputs.get("Fac"))
+                shader_node_tree.links.new(roughthness_inv.outputs[0], shader_node.inputs.get("Roughness"))
+                shader_node_tree.links.new(orm.outputs.get("B"), shader_node.inputs.get("Metallic"))
+                shader_node_tree.links.new(texture_mat_node.outputs.get("Alpha"), diffuse.inputs.get("Fac"))
             elif i == 3:
-                material_node_tree.links.new(texture_mat_node.outputs.get("Color"), shader_node.inputs.get("Emission"))
+                shader_node_tree.links.new(texture_mat_node.outputs.get("Color"), shader_node.inputs.get("Emission"))
             elif i == 4:
-                team_color = material_node_tree.nodes.new('ShaderNodeRGB')
+                team_color = shader_node_tree.nodes.new('ShaderNodeRGB')
                 team_color.outputs[0].default_value = (1, 0, 0, 1)
                 team_color.location.x -= shader_node.width + diffuse.width + 50
                 # material_node_tree.links.new(texture_mat_node.outputs.get("Color"), diffuse.inputs.get("Color2"))
-                material_node_tree.links.new(team_color.outputs.get("Color"), diffuse.inputs.get("Color2"))
+                shader_node_tree.links.new(team_color.outputs.get("Color"), diffuse.inputs.get("Color2"))
             # else:
             # skip the environmental map, possibly change the world's map to it
             print(bpy_image.filepath, " at place ", i)
     else:
         for i, bpy_image in enumerate( bpy_images_of_layer ):
-            texture_mat_node            = material_node_tree.nodes.new( 'ShaderNodeTexImage' )
+            texture_mat_node            = shader_node_tree.nodes.new( 'ShaderNodeTexImage' )
             texture_mat_node.name       = bpy_image.name
             texture_mat_node.location.x -= shader_node.width + 50
             texture_mat_node.location.y += 200 - 100 * i
             texture_mat_node.image      = bpy_image
-            material_node_tree.links.new( texture_mat_node.outputs.get( "Color"), color_input_socket )
+            shader_node_tree.links.new( texture_mat_node.outputs.get( "Color"), color_input_socket )
             # bpy_material.texture_slots.add()
             # bpyTexture = bpy.data.textures.new(name=material_name, type='IMAGE')
             # bpy_material.texture_slots[texture_slot_index].texture = bpyTexture
@@ -150,7 +151,10 @@ def get_texture_ext( texture_exc: str ):
     return texture_exc
 
 
-def get_image( folders: list[str], team_color: str, texture: WarCraft3Texture, texture_exc: str ):
+def get_image( folders: list[str], team_color: str, texture: WarCraft3Texture, texture_exc: str ) -> Image:
+    '''
+        블렌더 텍스쳐 Image 생성
+        '''
     if texture.replaceable_id == 1:  # Team Color
         image_file = constants.TEAM_COLOR_IMAGES[team_color]
     elif texture.replaceable_id == 2:  # Team Glow
@@ -163,9 +167,9 @@ def get_image( folders: list[str], team_color: str, texture: WarCraft3Texture, t
     if image_file.endswith(".tif"):
         image_file = image_file.split(".tif")[0] + texture_exc
 
-    image_file = image_file.replace("/", os.path.sep)
-    image_file = image_file.replace("\\", os.path.sep)
-    file_path_parts = image_file.split(os.path.sep)
+    image_file          = image_file.replace( "/", os.path.sep )
+    image_file          = image_file.replace( "\\", os.path.sep )
+    file_path_parts     = image_file.split( os.path.sep )
 
     file_name           = file_path_parts[-1].split('.')[0]
     bpy_image           = bpy.data.images.new( file_name, 0, 0 )
@@ -179,7 +183,7 @@ def get_image( folders: list[str], team_color: str, texture: WarCraft3Texture, t
         # file_path = Path(resource_folder + image_file)
         # split = image_file.split("\\", i)
         split           = image_file.split( os.path.sep, i )
-        image_file      = split[ len(split)-1 ]
+        image_file      = split[ len( split ) - 1 ]
 
         for folder in folders:
             file_path   = check_file_path( folder, image_file )
@@ -195,7 +199,7 @@ def get_image( folders: list[str], team_color: str, texture: WarCraft3Texture, t
     return bpy_image
 
 
-def get_folders( alt_folder: str, resource_folder: str, model_file: str ):
+def get_folders( alt_folder: str, resource_folder: str, model_file: str ) -> list[str]:
     if resource_folder == '':
         print( "[io_scene_mdx] No resource folder set in addon preferences" )
 
@@ -230,7 +234,7 @@ def get_folders( alt_folder: str, resource_folder: str, model_file: str ):
             folders.append( f )
     return folders
 
-def check_file_path( folder: str, image_file: str ):
+def check_file_path( folder: str, image_file: str ) -> str:
     # file_path = folder + os.path.sep + image_file
     file_path = folder + image_file
     # print("checking", file_path)

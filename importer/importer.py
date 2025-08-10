@@ -24,18 +24,18 @@ def load_warcraft_3_model( model: WarCraft3Model, import_properties: MDXImportPr
     
 def make_heirarchy_nodes( model: WarCraft3Model ):
     """
-        Hierarchy 구성    
+        WarCraft2Node들의 Hierarchy 구성    
         """
     nodes: list[WarCraft3Node]      = model.nodes
     pivot_points: list[list[float]] = model.pivot_points
     
-    for nodeIndex, node in enumerate( nodes ):
-        #print( str( nodeIndex ) + " : " + node.name )
+    for node_i, node in enumerate( nodes ):
+        print( str( node_i ) + " : " + node.name )
         if node.parent is None:
             node.part = None
         else:
             parent = nodes[ node.parent ]
             if parent.children is None:
                 parent.children = []
-            parent.children.append( node )
-            node.part = parent
+            parent.children.append( node ) # 부모의 자식으로 등록
+            node.part = parent # 부모 등록

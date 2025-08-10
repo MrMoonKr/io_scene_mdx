@@ -1,7 +1,9 @@
 import os
 
 import bpy
+from bpy.types import Operator
 import bpy_extras
+from bpy_extras.io_utils import ImportHelper
 
 from .classes.MDXImportProperties import MDXImportProperties
 from .mdx_parser.load_mdx import load_mdx
@@ -11,14 +13,14 @@ from . import utils
 
 
 
-class WarCraft3OperatorImportMDX( bpy.types.Operator, bpy_extras.io_utils.ImportHelper ):
+class WarCraft3OperatorImportMDX( Operator, ImportHelper ):
     '''
         WarCraft 3 Import MDX/MDL Operator
         '''
     
     bl_idname       = 'warcraft_3.import_mdl_mdx'
     bl_label        = 'Import *.mdl/*.mdx'
-    bl_description  = 'Import *.mdl/*.mdx files (3d models of WarCraft 3)'
+    bl_description  = 'Import *.mdl/*.mdx files ( 3D Models of WarCraft 3 )'
     bl_options      = {'UNDO'}
 
     filename_ext    = ['.mdx', '.mdl']
@@ -77,10 +79,10 @@ class WarCraft3OperatorImportMDX( bpy.types.Operator, bpy_extras.io_utils.Import
         ) # type: ignore
 
     def draw( self, context ):
-        layout = self.layout
+        layout      = self.layout
         
-        split = layout.split( factor=0.9 )
-        sub_split = split.split( factor=0.5 )
+        split       = layout.split( factor=0.9 )
+        sub_split   = split.split( factor=0.5 )
         sub_split.label( text='Team Color:' )
         sub_split.prop( self, 'setTeamColor', text='' )
         split.prop( self, 'teamColor', text='' )
@@ -98,7 +100,7 @@ class WarCraft3OperatorImportMDX( bpy.types.Operator, bpy_extras.io_utils.Import
         import_properties.use_custom_fps = self.useCustomFPS
         import_properties.fps           = self.animationFPS
         import_properties.calculate_frame_time()
-        #constants.os_path_separator = os.path
+
         if ".mdl" in self.filepath:
             load_mdl( import_properties )
         else:
@@ -111,7 +113,7 @@ class WarCraft3OperatorImportMDX( bpy.types.Operator, bpy_extras.io_utils.Import
         return {'RUNNING_MODAL'}
 
 
-class WarCraft3OperatorAddSequenceToArmature( bpy.types.Operator ):
+class WarCraft3OperatorAddSequenceToArmature( Operator ):
     '''
         context.armature.warcraft_3.sequencesList.add()
         '''
@@ -129,7 +131,7 @@ class WarCraft3OperatorAddSequenceToArmature( bpy.types.Operator ):
         return {'FINISHED'}
 
 
-class WarCraft3OperatorRemoveSequenceToArmature( bpy.types.Operator ):
+class WarCraft3OperatorRemoveSequenceToArmature( Operator ):
     '''
         context.armature.warcraft_3.sequencesList.remove()
         '''
@@ -146,7 +148,7 @@ class WarCraft3OperatorRemoveSequenceToArmature( bpy.types.Operator ):
         return {'FINISHED'}
 
 
-class WarCraft3OperatorUpdateBoneSettings( bpy.types.Operator ):
+class WarCraft3OperatorUpdateBoneSettings( Operator ):
     '''
         bone_groups 업데이트
         '''

@@ -8,18 +8,23 @@ from ..classes.WarCraft3Model import WarCraft3Model
 
 def create_mesh_objects( model: WarCraft3Model, bpy_materials: list[Material] ) -> list[Object]:
     """
-        create blender mesh.  
+        블렌더 메시 생성.  
         """
         
     print( "[io_scene_mdx] creating mesh" )
     
     bpy_mesh_objects: list[Object] = []
 
+    new_collection = bpy.data.collections.new( model.name )
+    bpy.context.collection.children.link( new_collection )
+
     for warCraft3Geoset in model.geosets:
         # 메시 오브젝트 생성
         bpy_mesh    = bpy.data.meshes.new( warCraft3Geoset.name )
         bpy_object  = bpy.data.objects.new( warCraft3Geoset.name, bpy_mesh )
-        bpy.context.scene.collection.objects.link( bpy_object )
+        
+        # bpy.context.scene.collection.objects.link( bpy_object )
+        new_collection.objects.link( bpy_object )
         
         # 메시 데이터 로딩
         bpy_mesh.from_pydata( warCraft3Geoset.vertices, [], warCraft3Geoset.triangles )

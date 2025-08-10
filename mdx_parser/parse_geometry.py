@@ -1,3 +1,5 @@
+from mathutils import Vector, Quaternion, Matrix
+
 from ..classes.WarCraft3Geoset import WarCraft3Geoset
 from . import binary_reader
 from .. import constants
@@ -19,8 +21,8 @@ def parse_geometry( data: bytes, version: int ) -> WarCraft3Geoset:
     chunk_id                = br.getid( constants.CHUNK_VERTEX_POSITION )
     vertex_count            = br.getf('<I')[0]
     for _ in range( vertex_count ):
-        vertex_position_x, vertex_position_y, vertex_position_z = br.getf('<3f')
-        geoset.vertices.append( ( vertex_position_x, vertex_position_y, vertex_position_z ) )
+        pos_x, pos_y, pos_z = br.getf('<3f')
+        geoset.vertices.append( ( pos_x, pos_y, pos_z ) )
 
     # 'NRMS' 정점들의 법선, ...
     chunks_to_skip          = [ [constants.CHUNK_VERTEX_NORMAL,   '<3f'],   # 'NRMS'
@@ -39,8 +41,8 @@ def parse_geometry( data: bytes, version: int ) -> WarCraft3Geoset:
         raise Exception( 'bad indices ( indices_count % 3 != 0 )' )     # 숫자 에러 체크
 
     for _ in range( indices_count // 3 ):
-        vertex_index1, vertex_index2, vertex_index3 = br.getf('<3H')
-        geoset.triangles.append( ( vertex_index1, vertex_index2, vertex_index3 ) )
+        face_a, face_b, face_c = br.getf('<3H')
+        geoset.triangles.append( ( face_a, face_b, face_c ) )
 
     # parse vertex groups
     chunk_id            = br.getid( constants.CHUNK_VERTEX_GROUP )  # 'GNDX'
